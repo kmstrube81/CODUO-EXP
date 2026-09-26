@@ -13,16 +13,23 @@ EXP_Init()
     level.PlayerKilled_Callbacks = maps\mp\uox\_uox_arrays::arrayUnshift(level.PlayerKilled_Callbacks, ::EXP_PlayerKilled);
     //run exp routines after regular player connect callback
     level.PlayerConnect_Callbacks = maps\mp\uox\_uox_arrays::arrayPush(level.PlayerConnect_Callbacks, ::EXP_PlayerConnect);
+    
+    level.PlayerDisconnect_Callbacks = maps\mp\uox\_uox_arrays::arrayPush(level.PlayerDisconnect_Callbacks, ::EXP_PlayerDisconnect);
 }
 
 EXP_Vars()
 {
-   
+    level.exp_multiplier = maps\mp\uox\_uox_vars::varDef("exp", "multiplier", "float", true, 1, 0, 10, "XP Multiplier");
+    level.exp_killvalue = maps\mp\uox\_oux_vars::varDef("exp", "killvalue", "int", true, 10, 0, 100, "Kill Base XP Value", ::updateKillValue);
+    level.exp_assistvalue = maps\mp\uox\_oux_vars::varDef("exp", "assistvalue", "int", true, 4, 0, 100, "Kill Base Assist Value", ::updateAssistValue);
 }
 
 EXP_Precache()
 {
-
+    game["plusText"] = &"+";
+    game["minusText"] = &"-";
+    precacheString(game["plusText"]);
+    precacheString(game["minusText"]);
 }
 
 EXP_StartGameType()
@@ -33,15 +40,152 @@ EXP_StartGameType()
 
 EXP_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc)
 {
+
+    if(level.warmup)
+        return;
+        
+    if ( (isdefined (eAttacker)) && (isPlayer(eAttacker)) && (isdefined (eAttacker.god)) && (eAttacker.god == true) )
+		return; //ignore damage from god mode players
+
+	if(self.sessionteam == "spectator" || (self.god == true) )
+		return; //ignore damage to god mode players
+
+	if([[level.getVars]]("scr_ceasefire"))
+		return;
+	
+	if(level.roundended)
+		return;
+		
+    if(!isDefined(eAttacker) || !isPlayer(eAttacker))
+        return;	
+		
+    if(isPlayer(eAttacker) && (self.pers["team"] == eAttacker.pers["team"]))
+    	    return;
+		
     //record player damage for potential assist
+    if(!isDefined(self.assistDamage))
+        self.assistDamage = maps\mp\uox\_uox_arrays::superArray();
+    attackerNum = eAttacker getEntityNumber();
+    time = getTime();
+    damage = maps\mp\uox\_uox_arrays::getValue(self.assistDamage, attackerNum);
+     
+    //is there already recorded damage?
+    if(isDefined(damage))
+    { //add to damage
+        if((time - damage["time"])/1000 < 10) //if last damage was less than 10s ago
+            damage["damage"] += iDamage;
+        else
+            damage["damage"] = iDamage;  
+        damage["time"] = time;
+        
+        self.assistDamage = maps\mp\uox\_uox_arrays::updateValue(self.assistDamage, attackerNum, damage);
+    }
+    else //no damage defined
+    { //create new entry
+        damage = [];
+        damage["player"] = eAttacker;
+        damage["damage"] = iDamage;
+        damage["time"] = time;
+        
+        self.assistDamage = maps\mp\uox\_uox_arrays::arrayPush(self.assistDamage, damage, attackerNum);
+    }
 }
 
 EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sHitLoc)
 {
     //pop the exp value on the kill
+    if(level.warmup)
+        return;
+        
+    if ( (isdefined (attacker)) && (isPlayer(attacker)) && (isdefined (attacker.god)) && (attacker.god == true) )
+		return; //ignore damage from god mode players
+
+	if(self.sessionteam == "spectator" || (self.god == true) )
+		return; //ignore damage to god mode players
+
+	if([[level.getVars]]("scr_ceasefire"))
+		return;
+	
+	if(level.roundended)
+		return;
+		
+    if(!isDefined(attacker) || !isPlayer(attacker))
+        return;	
+		
+    if(isPlayer(attacker) && (self.pers["team"] == attacker.pers["team"]))
+    	    return;
+    	    
+    if(!isDefined(self.assistDamage))
+        return;
+        
+    time = getTime();
+    attackerNum = attacker getEntityNumber();
+    
+    //pop the xp text on the killing player
+    attacker thread EXP_HudPop(level.exp_killvalue);
+    //pop the assist text on the assisting players
+    thread maps\mp\uox\_uox_arrays::arrayReadEach(::EXP_PopAssists)
+    //delete the array
+    self.assistDamage = undefined;
 }
 
 EXP_PlayerConnect()
 {
     //load player level. watch for stat menu?
+}
+
+EXP_PlayerDisconnect()
+{
+    //save player level.
+}
+
+updateKillValue(xp)
+{
+    level.exp_killvalue = xp;
+}
+
+updateAssistValue(xp)
+{
+    level.exp_assistvalue = xp;
+}
+
+EXP_PopAssists(damage)
+{
+    if(!isDefined(damage["player"]))
+        return;
+        
+    if(!isPlayer(damage["player"])) //return if player is no longer valid
+        return;
+        
+    time = getTime();
+    
+    if((time - damage["time"])/1000 > 10) //return if damage was more than 10s ago
+        return;
+        
+    if(damage["damage"] < 50) //return if damage wasn't more than 50
+        return;
+        
+    damage["player"] thread EXP_HudPop(level.exp_assistvalue);   
+}
+
+EXP_HudPop(value)
+{
+    self notify("exp_pop");
+
+    element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
+    
+    if(!isDefined(element.exp_value))
+        element.exp_value = value;
+    else 
+        element.exp_value += value;
+        
+    self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", element.exp_value, options); 
+        
+    self thread maps\mp\uox\_uox_hud::popText(element);
+    
+    wait level.frametime;
+    self endon("exp_pop");
+    
+    wait 2;
+    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop");
 }
