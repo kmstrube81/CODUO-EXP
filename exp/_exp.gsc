@@ -20,8 +20,8 @@ EXP_Init()
 EXP_Vars()
 {
     level.exp_multiplier = maps\mp\uox\_uox_vars::varDef("exp", "multiplier", "float", true, 1, 0, 10, "XP Multiplier");
-    level.exp_killvalue = maps\mp\uox\_oux_vars::varDef("exp", "killvalue", "int", true, 10, 0, 100, "Kill Base XP Value", ::updateKillValue);
-    level.exp_assistvalue = maps\mp\uox\_oux_vars::varDef("exp", "assistvalue", "int", true, 4, 0, 100, "Kill Base Assist Value", ::updateAssistValue);
+    level.exp_killvalue = maps\mp\uox\_uox_vars::varDef("exp", "killvalue", "int", true, 10, 0, 100, "Kill Base XP Value", ::updateKillValue);
+    level.exp_assistvalue = maps\mp\uox\_uox_vars::varDef("exp", "assistvalue", "int", true, 4, 0, 100, "Kill Base Assist Value", ::updateAssistValue);
 }
 
 EXP_Precache()
@@ -174,24 +174,35 @@ EXP_HudPop(value)
     
     options["x"] = 320;
     options["y"] = 240;
-    options["alignX"] = "right";
+    options["alignX"] = "left";
     options["alignY"] = "middle";
     options["alpha"] = 0;
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
+    options["alignX"] = "right";
+    
     
     if(!isDefined(element.exp_value))
         element.exp_value = value;
     else 
         element.exp_value += value;
+    
+    if(value >= 0)    
+        sign = game["plusText"];
+    else
+        sign = game["minusText"];
+    
+    _element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop+", "text", sign, options);
         
     self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", element.exp_value, options); 
         
     self thread maps\mp\uox\_uox_hud::popText(element);
+    self thread maps\mp\uox\_uox_hud::popText(_element);
     
     wait level.frametime;
     self endon("exp_pop");
     
     wait 2;
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop");
+    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop+");
 }
