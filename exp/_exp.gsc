@@ -121,10 +121,13 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     time = getTime();
     attackerNum = attacker getEntityNumber();
     
+    //remove the killer from the assist array
+    self.assistDamage = maps\mp\uox\_uox_arrays::arrayPop(self.assistDamage, attackerNum);
+    
     //pop the xp text on the killing player
     attacker thread EXP_HudPop(level.exp_killvalue);
     //pop the assist text on the assisting players
-    thread maps\mp\uox\_uox_arrays::arrayReadEach(::EXP_PopAssists);
+    thread maps\mp\uox\_uox_arrays::arrayReadEach(self.assistDamage, ::EXP_PopAssists);
     //delete the array
     self.assistDamage = undefined;
 }
