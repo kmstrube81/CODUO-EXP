@@ -181,7 +181,7 @@ EXP_HudPop(value)
     options["alignY"] = "middle";
     options["alpha"] = 1;
     options["fontscale"] = 2;
-    options["font"] = "bigfixed";
+   // options["font"] = "bigfixed";
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
     options["alignX"] = "right";
@@ -208,6 +208,6 @@ EXP_HudPop(value)
     self endon("exp_pop");
     
     wait 2;
-    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop");
-    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop+");
+   // self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop");
+   // self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop+");
 }
