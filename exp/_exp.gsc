@@ -179,7 +179,7 @@ EXP_HudPop(value)
     options["y"] = 320;
     options["alignX"] = "left";
     options["alignY"] = "middle";
-    options["alpha"] = 0;
+    options["alpha"] = 1;
     options["fontscale"] = 2;
     options["font"] = "bigfixed";
 
