@@ -180,7 +180,8 @@ EXP_HudPop(value)
     options["alignX"] = "left";
     options["alignY"] = "middle";
     options["alpha"] = 0;
-    options["fontscale"] = 1.6;
+    options["fontscale"] = 2;
+    options["font"] = "bigfixed";
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
     options["alignX"] = "right";
