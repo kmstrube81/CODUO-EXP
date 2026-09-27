@@ -218,6 +218,6 @@ EXP_HudPop(value)
     self endon("exp_pop");
     
     wait 2;
-   // self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop");
-   // self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop+");
+    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop");
+    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop+");
 }
