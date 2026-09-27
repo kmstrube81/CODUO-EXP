@@ -209,13 +209,17 @@ EXP_HudPop(value)
         
     self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", element.exp_value, options); 
         
-    self thread maps\mp\uox\_uox_hud::popText(element, 1.5);
-    self thread maps\mp\uox\_uox_hud::popText(_element, 1.5);
+    self thread maps\mp\uox\_uox_hud::popText(element);
+    self thread maps\mp\uox\_uox_hud::popText(_element);
     
     wait level.frametime;
     self endon("exp_pop");
     
-    wait 2 - level.frametime;
+    wait 1.5 - level.frametime;
+    element fadeOverTime(0.5);
+    _element fadeOverTime(0.5);
+    element.alpha = 0;
+    _element.alpha = 0;
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop");
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop+");
 }
