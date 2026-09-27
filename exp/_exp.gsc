@@ -59,7 +59,7 @@ EXP_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon
     if(!isDefined(eAttacker) || !isPlayer(eAttacker))
         return;	
 		
-    if(isPlayer(eAttacker) && (self.pers["team"] == eAttacker.pers["team"]))
+    if(isPlayer(eAttacker) && (self == eAttacker))
     	    return;
 		
     //record player damage for potential assist
@@ -112,7 +112,7 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     if(!isDefined(attacker) || !isPlayer(attacker))
         return;	
 		
-    if(isPlayer(attacker) && (self.pers["team"] == attacker.pers["team"]))
+    if(isPlayer(attacker) && (attacker == self))
     	    return;
     	    
     if(!isDefined(self.assistDamage))
@@ -182,7 +182,7 @@ EXP_HudPop(value)
     options["alignY"] = "middle";
     options["alpha"] = 1;
     options["fontscale"] = 2;
-    
+    options["font"] = "bigfixed";
     _options = [];
     _options["x"] = 320;
     _options["y"] = 320;
@@ -190,7 +190,7 @@ EXP_HudPop(value)
     _options["alignY"] = "middle";
     _options["alpha"] = 1;
     _options["fontscale"] = 2;
-   // options["font"] = "bigfixed";
+    _options["font"] = "bigfixed";
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
     
