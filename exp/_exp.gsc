@@ -180,16 +180,14 @@ EXP_HudPop(value)
     options["y"] = 320;
     options["alignX"] = "left";
     options["alignY"] = "middle";
-    options["alpha"] = 1;
-    options["fontscale"] = 2;
+    options["alpha"] = 0;
     options["font"] = "bigfixed";
     _options = [];
     _options["x"] = 320;
     _options["y"] = 320;
     _options["alignX"] = "right";
     _options["alignY"] = "middle";
-    _options["alpha"] = 1;
-    _options["fontscale"] = 2;
+    _options["alpha"] = 0;
     _options["font"] = "bigfixed";
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
@@ -211,8 +209,8 @@ EXP_HudPop(value)
         
     self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", element.exp_value, options); 
         
-    self thread maps\mp\uox\_uox_hud::popText(element);
-    self thread maps\mp\uox\_uox_hud::popText(_element);
+    self thread maps\mp\uox\_uox_hud::popText(element, 2);
+    self thread maps\mp\uox\_uox_hud::popText(_element, 2);
     
     wait level.frametime;
     self endon("exp_pop");
