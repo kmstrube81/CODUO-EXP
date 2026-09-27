@@ -175,16 +175,24 @@ EXP_HudPop(value)
 {
     self notify("exp_pop");
     
+    options = [];
     options["x"] = 320;
     options["y"] = 320;
     options["alignX"] = "left";
     options["alignY"] = "middle";
     options["alpha"] = 1;
     options["fontscale"] = 2;
+    
+    _options = [];
+    _options["x"] = 320;
+    _options["y"] = 320;
+    _options["alignX"] = "right";
+    _options["alignY"] = "middle";
+    _options["alpha"] = 1;
+    _options["fontscale"] = 2;
    // options["font"] = "bigfixed";
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
-    options["alignX"] = "right";
     
     
     if(!isDefined(element.exp_value))
@@ -197,7 +205,7 @@ EXP_HudPop(value)
     else
         sign = game["minusText"];
     
-    _element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop+", "text", sign, options);
+    _element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop+", "text", sign, _options);
         
     self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", element.exp_value, options); 
         
