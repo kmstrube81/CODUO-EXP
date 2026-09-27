@@ -176,10 +176,11 @@ EXP_HudPop(value)
     self notify("exp_pop");
     
     options["x"] = 320;
-    options["y"] = 240;
+    options["y"] = 320;
     options["alignX"] = "left";
     options["alignY"] = "middle";
     options["alpha"] = 0;
+    options["fontscale"] = 1.6;
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
     options["alignX"] = "right";
