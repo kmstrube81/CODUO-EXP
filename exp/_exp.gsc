@@ -62,6 +62,14 @@ EXP_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon
     if(isPlayer(eAttacker) && (self == eAttacker))
     	    return;
 		
+	ffire = [[level.getVars]]("scr_friendlyfire");
+	
+	if((ffire == 0 || ffire == 2) && level.uox_teamplay);
+	    return;
+	    
+    if(ffire == 3 && level.uox_teamplay)
+        iDamage = iDamage * 0.5; 
+		
     //record player damage for potential assist
     if(!isDefined(self.assistDamage))
         self.assistDamage = maps\mp\uox\_uox_arrays::superArray();
@@ -83,7 +91,8 @@ EXP_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon
     else //no damage defined
     { //create new entry
         damage = [];
-        damage["player"] = eAttacker;
+        damage["attacker"] = eAttacker;
+        damage["victim"] = self;
         damage["damage"] = iDamage;
         damage["time"] = time;
         
@@ -121,11 +130,16 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     time = getTime();
     attackerNum = attacker getEntityNumber();
     
+    killxp = level.exp_killvalue;
+    if(attacker.pers["team"] == self.pers["team"] ) //&& !level.uox_teamplay)
+        killxp = killxp * -1;
+    
     //remove the killer from the assist array
     self.assistDamage = maps\mp\uox\_uox_arrays::arrayPop(self.assistDamage, attackerNum);
     
-    //pop the xp text on the killing player
+    //pop the xp text on the killing player 
     attacker thread EXP_HudPop(level.exp_killvalue);
+
     //pop the assist text on the assisting players
     thread maps\mp\uox\_uox_arrays::arrayReadEach(self.assistDamage, ::EXP_PopAssists);
     //delete the array
@@ -154,12 +168,15 @@ updateAssistValue(xp)
 
 EXP_PopAssists(damage)
 {
-    if(!isDefined(damage["player"]))
+    if(!isDefined(damage["attacker"]))
         return;
         
-    if(!isPlayer(damage["player"])) //return if player is no longer valid
+    if(!isPlayer(damage["attacker"])) //return if player is no longer valid
         return;
         
+    assistxp = level.exp_assistvalue;
+    if(damage["attacker"].pers["team"] == damage["victim"].pers["team"])
+        assistxp = assistxp * -1; 
     time = getTime();
     
     if((time - damage["time"])/1000 > 10) //return if damage was more than 10s ago
@@ -168,7 +185,7 @@ EXP_PopAssists(damage)
     if(damage["damage"] < 50) //return if damage wasn't more than 50
         return;
         
-    damage["player"] thread EXP_HudPop(level.exp_assistvalue);   
+    damage["attacker"] thread EXP_HudPop(level.exp_assistvalue);   
 }
 
 EXP_HudPop(value)
