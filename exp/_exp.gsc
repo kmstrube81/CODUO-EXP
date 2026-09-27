@@ -199,6 +199,8 @@ EXP_HudPop(value)
         element.exp_value = value;
     else 
         element.exp_value += value;
+        
+    maps\mp\uox\_uox_debug("debug", self.name + " create damage pop of value " + element.exp_value); 
     
     if(value >= 0)    
         sign = game["plusText"];
