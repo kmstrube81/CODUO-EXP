@@ -124,7 +124,7 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     //pop the xp text on the killing player
     attacker thread EXP_HudPop(level.exp_killvalue);
     //pop the assist text on the assisting players
-    thread maps\mp\uox\_uox_arrays::arrayReadEach(::EXP_PopAssists)
+    thread maps\mp\uox\_uox_arrays::arrayReadEach(::EXP_PopAssists);
     //delete the array
     self.assistDamage = undefined;
 }
@@ -171,6 +171,12 @@ EXP_PopAssists(damage)
 EXP_HudPop(value)
 {
     self notify("exp_pop");
+    
+    options["x"] = 320;
+    options["y"] = 240;
+    options["alignX"] = "right";
+    options["alignY"] = "middle";
+    options["alpha"] = 0;
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
     
