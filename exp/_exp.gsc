@@ -133,12 +133,18 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     killxp = level.exp_killvalue;
     if(attacker.pers["team"] == self.pers["team"] ) //&& !level.uox_teamplay)
         killxp = killxp * -1;
+
+    botMultiplier = 1;
+    if(isDefined(self.pers["isBot"]))
+       botMultiplier = 0.5;
+
+    killxp = killxp * level.exp_multiplier * botMultiplier;
     
     //remove the killer from the assist array
     self.assistDamage = maps\mp\uox\_uox_arrays::arrayPop(self.assistDamage, attackerNum);
     
     //pop the xp text on the killing player 
-    attacker thread EXP_HudPop(level.exp_killvalue);
+    attacker thread EXP_HudPop(killxp);
 
     //pop the assist text on the assisting players
     thread maps\mp\uox\_uox_arrays::arrayReadEach(self.assistDamage, ::EXP_PopAssists);
@@ -177,6 +183,13 @@ EXP_PopAssists(damage)
     assistxp = level.exp_assistvalue;
     if(damage["attacker"].pers["team"] == damage["victim"].pers["team"])
         assistxp = assistxp * -1; 
+
+    botMultiplier = 1;
+    if(isDefined(damage["victim"].pers["isBot"]))
+       botMultiplier = 0.5;
+
+    assistxp = assistxp * level.exp_multiplier * botMultiplier;
+
     time = getTime();
     
     if((time - damage["time"])/1000 > 10) //return if damage was more than 10s ago
@@ -185,7 +198,7 @@ EXP_PopAssists(damage)
     if(damage["damage"] < 50) //return if damage wasn't more than 50
         return;
         
-    damage["attacker"] thread EXP_HudPop(level.exp_assistvalue);   
+    damage["attacker"] thread EXP_HudPop(assistxp);   
 }
 
 EXP_HudPop(value)
