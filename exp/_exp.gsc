@@ -62,9 +62,9 @@ EXP_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon
     if(isPlayer(eAttacker) && (self == eAttacker))
     	    return;
 		
-	ffire = [[level.getVars]]("scr_friendlyfire");
+	ffire = level.friendlyfire;
 	
-	if((ffire == 0 || ffire == 2) && level.uox_teamplay);
+	if((ffire == 0 || ffire == 2) && level.uox_teamplay)
 	    return;
 	    
     if(ffire == 3 && level.uox_teamplay)
