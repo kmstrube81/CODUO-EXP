@@ -244,12 +244,16 @@ EXP_HudPop(value)
     
     wait level.frametime;
     self endon("exp_pop");
+    self endon("hud_clear");
     
     wait 1.5 - level.frametime;
     element fadeOverTime(0.5);
-    _element fadeOverTime(0.5);
     element.alpha = 0;
-    _element.alpha = 0;
+    if(isDefined(sign))
+    {
+        _element fadeOverTime(0.5);
+        _element.alpha = 0;
+    }
     
     wait 0.5;
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop");
