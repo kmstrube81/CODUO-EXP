@@ -27,9 +27,7 @@ EXP_Vars()
 EXP_Precache()
 {
     game["plusText"] = &"+";
-    game["minusText"] = &"-";
     precacheString(game["plusText"]);
-    precacheString(game["minusText"]);
 }
 
 EXP_StartGameType()
@@ -64,10 +62,10 @@ EXP_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon
 		
 	ffire = level.friendlyfire;
 	
-	if((ffire == 0 || ffire == 2) && level.uox_teamplay)
+	if((ffire == 0 || ffire == 2) && level.uox_teamplay && eAttacker.pers["team"] == self.pers["team"])
 	    return;
 	    
-    if(ffire == 3 && level.uox_teamplay)
+    if(ffire == 3 && level.uox_teamplay && eAttacker.pers["team"] == self.pers["team"])
         iDamage = iDamage * 0.5; 
 		
     //record player damage for potential assist
@@ -131,7 +129,7 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     attackerNum = attacker getEntityNumber();
     
     killxp = level.exp_killvalue;
-    if(attacker.pers["team"] == self.pers["team"] ) //&& !level.uox_teamplay)
+    if(attacker.pers["team"] == self.pers["team"] && !level.uox_teamplay)
         killxp = killxp * -1;
 
     botMultiplier = 1;
@@ -233,14 +231,16 @@ EXP_HudPop(value)
     if(value >= 0)    
         sign = game["plusText"];
     else
-        sign = game["minusText"];
+        sign = undefined;
     
-    _element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop+", "text", sign, _options);
+    if(isDefined(sign))
+        _element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop+", "text", sign, _options);
         
     self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", element.exp_value, options); 
         
     self thread maps\mp\uox\_uox_hud::popText(element, 1.5);
-    self thread maps\mp\uox\_uox_hud::popText(_element, 1.5);
+    if(isDefined(sign))
+        self thread maps\mp\uox\_uox_hud::popText(_element, 1.5);
     
     wait level.frametime;
     self endon("exp_pop");
