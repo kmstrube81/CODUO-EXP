@@ -202,7 +202,9 @@ EXP_PopAssists(damage)
 EXP_HudPop(value)
 {
     self notify("exp_pop");
-    
+    self endon("exp_pop");
+    self endon("hud_clear");
+
     options = [];
     options["x"] = 320;
     options["y"] = 320;
@@ -241,12 +243,8 @@ EXP_HudPop(value)
     self thread maps\mp\uox\_uox_hud::popText(element, 1.5);
     if(isDefined(sign))
         self thread maps\mp\uox\_uox_hud::popText(_element, 1.5);
-    
-    wait level.frametime;
-    self endon("exp_pop");
-    self endon("hud_clear");
-    
-    wait 1.5 - level.frametime;
+ 
+    wait 1.5;
     element fadeOverTime(0.5);
     element.alpha = 0;
     if(isDefined(sign))
