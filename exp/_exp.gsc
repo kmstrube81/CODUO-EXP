@@ -165,22 +165,8 @@ EXP_PlayerDisconnect()
 
 EXP_LoadPlayerLevel()
 {
-    self exp\_query::query("exp", "GET exp WHERE guid=" + self getGuid(), 10);
-    self thread EXP_LoadPlayerLevelTimeout();
+    self exp\_query::load("exp", "Experience");
     
-    self endon("query_timeout exp");
-    self waittill("query_result exp");
-    
-    self.pers["exp"] += self.pers["temp exp"];
-}
-
-EXP_LoadPlayerLevelTimeout()
-{
-    self endon("query_result exp");
-    self waittill("query_timeout exp");
-    
-    self iprintln("Failed to Connect to DB. Stats will not save between rounds");
-}
 
 updateKillValue(xp)
 {
