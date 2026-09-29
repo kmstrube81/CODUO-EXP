@@ -4,9 +4,6 @@ query(prop, query_text, timeout)
 	if(!isDefined(timeout))
 		timeout = 10;
 	
-	//init the property
-	self.pers[prop] = "";
-	
 	//craft a query ID to search for the result.
 	queryID = self getGuid() + randomInt(100000);
 	logPrint( "query;" + queryID + ";" + query_text + "\n" );
@@ -25,12 +22,15 @@ waitForResult(prop, queryID, timeout)
 		if(maps\mp\uox\_uox::findStr(queryID, query_result, "start") > -1)
         {
             self.pers[prop] = maps\mp\uox\_uox::stringSplit(query_result)[1];
+            self notify("query_finished");
             return;
         }
 		//otherwise wait and try again
 		wait level.frametime; //check every frame
 		i++;
 	}
+	//hit timeout
+	self notify("query_timeout");
 }
 
 

@@ -22,6 +22,7 @@ EXP_Vars()
     level.exp_multiplier = maps\mp\uox\_uox_vars::varDef("exp", "multiplier", "float", true, 1, 0, 10, "XP Multiplier");
     level.exp_killvalue = maps\mp\uox\_uox_vars::varDef("exp", "killvalue", "int", true, 10, 0, 100, "Kill Base XP Value", ::updateKillValue);
     level.exp_assistvalue = maps\mp\uox\_uox_vars::varDef("exp", "assistvalue", "int", true, 4, 0, 100, "Kill Base Assist Value", ::updateAssistValue);
+    level.exp_loadtype = maps\mp\uox\_uox_vars::varDef("exp","loadtype", "int", false, 0, 0, 4);
 }
 
 EXP_Precache()
@@ -153,11 +154,32 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
 EXP_PlayerConnect()
 {
     //load player level. watch for stat menu?
+    self thread EXP_LoadPlayerLevel();
+    self thread
 }
 
 EXP_PlayerDisconnect()
 {
     //save player level.
+}
+
+EXP_LoadPlayerLevel()
+{
+    self exp\_query::query("exp", "GET exp WHERE guid=" + self getGuid(), 10);
+    self thread EXP_LoadPlayerLevelTimeout();
+    
+    self endon("query_timeout exp");
+    self waittill("query_result exp");
+    
+    self.pers["exp"] += self.pers["temp exp"];
+}
+
+EXP_LoadPlayerLevelTimeout()
+{
+    self endon("query_result exp");
+    self waittill("query_timeout exp");
+    
+    self iprintln("Failed to Connect to DB. Stats will not save between rounds");
 }
 
 updateKillValue(xp)
