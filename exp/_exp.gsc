@@ -229,14 +229,14 @@ EXP_HudPop(value)
 
     options = [];
     options["x"] = 320;
-    options["y"] = 320;
+    options["y"] = 180;
     options["alignX"] = "left";
     options["alignY"] = "middle";
     options["alpha"] = 0;
     //options["font"] = "bigfixed";
     _options = [];
     _options["x"] = 320;
-    _options["y"] = 320;
+    _options["y"] = 180;
     _options["alignX"] = "right";
     _options["alignY"] = "middle";
     _options["alpha"] = 0;
