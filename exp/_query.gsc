@@ -22,7 +22,7 @@ load(prop, propName, timeout)
 			self thread query(prop, "GET " + prop + " WHERE guid=" + self getGuid(), timeout);
 			break;
 		case 4: //4 = load from manually specified server cvar
-			self thread loadCvar(prop, 30);
+			self thread loadCvar(prop, 60);
 			break;
 	}
 	
@@ -116,4 +116,32 @@ waitForResult(prop, queryID, timeout)
 	self notify("load_timeout " + prop);
 }
 
+loadCvar(prop, timeout)
+{
+    result = getCvar("query_result");
+    player_ent = getCvar("query_player");
+    i = 0;
+    while(i < timeout * level.frametime)
+    {
+        if(result == "" || player_ent == "")
+        {
+            wait level.frametime;
+            continue;
+        }
+        if(player_ent == self getEntityNumber())
+            break;
+        wait level.frametime;
+        i++;
+    }
+
+    if( i >= timeout * level.frametime)
+    {
+        //hit timeout
+        self notify("load_timeout " + prop);
+        return;
+    }
+    self.pers["temp " + prop] = query_result;
+    self notify("load_result " + prop);
+    return;
+}
 
