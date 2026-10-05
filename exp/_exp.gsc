@@ -155,7 +155,7 @@ EXP_PlayerConnect()
 {
     //load player level. watch for stat menu?
     self thread EXP_LoadPlayerLevel();
-    self thread
+    self maps\mp\uox\_uox_loops::addToLoop(self, "medium", ::updateEXPHUD, "updateEXPHUD");
 }
 
 EXP_PlayerDisconnect()
@@ -238,7 +238,7 @@ EXP_HudPop(value)
         
     maps\mp\uox\_uox_debug::debugLog("debug", self.name + " create damage pop of value " + element.exp_value); 
     
-    if(value >= 0)    
+    if(element.exp_value >= 0)    
         sign = game["plusText"];
     else
         sign = undefined;
@@ -264,4 +264,88 @@ EXP_HudPop(value)
     wait 0.5;
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop");
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop+");
+}
+
+updateEXPHUD()
+{
+    if(isAlive(self) && self.pers["team"] != "spectator" && self.sessionstate == "playing")
+        self createEXPHUD();
+    else 
+        self deleteEXPHUD();
+}
+
+createEXPHUD()
+{
+
+    barsize = 100;
+	
+	backgroundOptions = [];
+	backgroundOptions["alignX"] = "left";
+	backgroundOptions["alignY"] = "middle";
+	backgroundOptions["x"] = 519;
+	backgroundOptions["y"] = 470;
+	backgroundOptions["height"] = 5;
+	backgroundOptions["width"] = (barsize + 2);
+	
+	barOptions = [];
+	barOptions["alignX"] = "right";
+	barOptions["alignY"] = "middle";
+	barOptions["x"] = 520;
+	barOptions["y"] = 470;
+	backgroundOptions["alpha"] = 0.5;
+	barOptions["height"] = 3;
+	barOptions["width"] = 0;
+	
+	//test if element already exists, don't spam hud updates
+	if(!isDefined(self getClientHUDElement("exp_barbackground")))
+		self updateClientHUDElement("exp_barbackground",
+			"shader", "white", backgroundOptions);
+
+	//test if element already exists, don't spam hud updates
+	if(!isDefined(self getClientHUDElement("exp_bar")))
+		self updateClientHUDElement("exp_bar",
+			"shader", "black", barOptions);
+			
+    //if text exists, add it to the progress bar
+    
+    textOptions = [];
+    textOptions["alignX"] = "center";
+    textOptions["alignY"] = "middle";
+    textOptions["x"] = 570;
+    textOptions["y"] = 470;
+    textOptions["fontscale"] = 0.5;
+    textOptions["color"] = (.5,.5,.5);
+
+    if(!isDefined(self getClientHUDElement("exp_bardiv")))
+	self updateClientHUDElement("exp_bardiv",
+		"text", game["dividerText"], textOptions);
+    
+    /*
+    if(isDefined(time))
+    {
+        if(time > timer)
+            time = timer;
+        barOptions["width"] = (barsize * time/timer);
+        self updateClientHUDElement("progressbar",
+			"shader", "white", barOptions);
+    }
+    else
+    {
+        barAnimOptions = [];
+    	barAnimOptions["height"] = 8;
+    	barAnimOptions["width"] = barsize;
+        self maps\mp\uox\_uox_hud::animateClientHUDElement("progressbar", "scaleShader",
+            barAnimOptions, timer);
+    }
+    */
+
+}
+
+deleteEXPHUD()
+{
+
+    self deleteClientHUDElement("exp_barbackground");
+	self deleteClientHUDElement("exp_bar");
+    self deleteClientHUDElement("exp_bardiv");
+
 }
