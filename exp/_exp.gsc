@@ -166,7 +166,7 @@ EXP_PlayerDisconnect()
 EXP_LoadPlayerLevel()
 {
     self exp\_query::load("exp", "Experience");
-    
+}
 
 updateKillValue(xp)
 {
