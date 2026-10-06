@@ -156,7 +156,7 @@ logValues()
     for(i = 0; i < keys.size; i++)
     {
         key = keys[i];
-        for(j = 0; j = guids.size; j++)
+        for(j = 0; j <= guids.size; j++)
         {
             guid = guids[j];
             if(isDefined(array[key][guid]))
