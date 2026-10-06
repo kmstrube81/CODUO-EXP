@@ -333,7 +333,7 @@ EXP_HudSlam(text)
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_notification", "text", text, options);
         
-    maps\mp\uox\_uox_debug::debugLog("debug", self.name + " create notification slam that says " + text); 
+    maps\mp\uox\_uox_debug::debugLog("debug", self.name + " create notification slam"); 
     
     self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_notification", "slamText", options, 1.5);
     wait 1.5;
