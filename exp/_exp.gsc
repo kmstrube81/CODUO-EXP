@@ -29,6 +29,53 @@ EXP_Precache()
 {
     game["plusText"] = &"+";
     precacheString(game["plusText"]);
+    game["exp_doubleKillText"] = &"Double Kill";
+    game["exp_tripleKillText"] = &"Triple Kill";
+    game["exp_multiKillText"] = &"Multi Kill";
+    precacheString(game["exp_doubleKillText"]);
+    precacheString(game["exp_tripleKillText"]);
+    precacheString(game["exp_multiKillText"]);
+    switch(level.objective)
+    {
+        case "ctf":
+            game["exp_takeFlagText"] = &"Flag Taken";
+            game["exp_returnFlagText"] = &"Flag Returned";
+            game["exp_captureFlagText"] = &"Flag Captured";
+            game["exp_defendFlagText"] = &"Flag Defended";
+            game["exp_assistFlagText"] = &"Flag Carrier Assisted";
+            precacheString(game["exp_takeFlagText"]);
+            precacheString(game["exp_returnFlagText"]);
+            precacheString(game["exp_captureFlagText"]);
+            precacheString(game["exp_defendFlagText"]);
+            precacheString(game["exp_assistFlagText"]);
+            break;
+        case "commandpost":
+            game["exp_captureFlagText"] = &"Flag Captured";
+            game["exp_defendFlagText"] = &"Flag Defended";
+            precacheString(game["exp_captureFlagText"]);
+            precacheString(game["exp_defendFlagText"]);
+            break;
+        case "bel":
+            game["exp_survivedText"] = &"Survived";
+            game["exp_killAlliedText"]= &"Allied Killed";
+            precacheString(game["exp_survivedText"]);
+            precacheString(game["exp_killAlliedText"]);
+            break;
+        case "retrieval":
+            game["exp_pickupText"] = &"Objective Picked Up";
+            game["exp_captureText"] = &"Objective Captured";
+            precacheString(game["exp_pickupText"]);
+            precacheString(game["exp_captureText"]);
+            break;
+        case "radio":
+            game["exp_captureRadioText"] = &"Radio Captured";
+            game["exp_destroyRadioText"] = &"Radio Destroyed";
+            game["exp_holdRadioText"] = &"Radio Held";
+            precacheString(game["exp_captureRadioText"]);
+            precacheString(game["exp_destroyRadioText"]);
+            precacheString(game["exp_holdRadioText"]);
+            break;
+    }
 }
 
 EXP_StartGameType()
@@ -290,6 +337,98 @@ updateEXPHUD()
         self createEXPHUD();
     else 
         self deleteEXPHUD();
+
+    //give exp for any pending nofications
+    if(isDefined(self.notification))
+    {
+        switch(self.notification)
+        {
+            case "double_kill":
+                self EXP_updateEXP(level.exp_assistvalue);
+                text = game["exp_doubleKillText"];
+                break;
+            case "triple_kill":
+                self EXP_updateEXP(level.exp_assistvalue);
+                text = game["exp_tripleKillText"];
+                break;
+            case "multi_kill":
+                self EXP_updateEXP(level.exp_killvalue);
+                text = game["exp_multiKillText"];
+                break;
+            case "bomb_plant":
+                self EXP_updateEXP(level.exp_killvalue);
+                self EXP_HudPop(level.exp_killvalue);
+                text = game["bombPlantedText"];
+                break;
+            case "bomb_defuse":
+                self EXP_updateEXP(level.exp_killvalue);
+                self EXP_HudPop(level.exp_killvalue);
+                text = game["bombDefusedText"];
+                break;
+            case "flag_take":
+                self EXP_updateEXP(level.exp_assistvalue);
+                self EXP_HudPop(level.exp_assistvalue);
+                text = game["exp_takeFlagText"];
+                break;
+            case "flag_returned":
+                self EXP_updateEXP(level.exp_assistvalue);
+                self EXP_HudPop(level.exp_assistvalue);
+                text = game["exp_returnFlagText"];
+                break;
+            case "flag_captured":
+                self EXP_updateEXP(level.exp_killvalue);
+                self EXP_HudPop(level.exp_killvalue);
+                text = game["exp_captureFlagText"];
+                break;
+            case "flag_defense":
+                self EXP_updateEXP(level.exp_assistvalue);
+                self EXP_HudPop(level.exp_assistvalue);
+                text = game["exp_defendFlagText"];
+                break;
+            case "flag_assist":
+                self EXP_updateEXP(level.exp_assistvalue);
+                self EXP_HudPop(level.exp_assistvalue);
+                text = game["exp_assistFlagText"];
+                break;
+            case "bel_survived":
+                self EXP_updateEXP(level.exp_assistvalue);
+                self EXP_HudPop(level.exp_assistvalue);
+                text = game["exp_survivedText"];
+                break;
+            case "bel_kill_allied":
+                self EXP_updateEXP(level.exp_killvalue);
+                self EXP_HudPop(level.exp_killvalue);
+                text = game["exp_killAlliedText"];
+                break;
+            case "re_pickup":
+                self EXP_updateEXP(level.exp_assistvalue);
+                self EXP_HudPop(level.exp_assistvalue);
+                text = game["exp_pickupText"];
+                break;
+            case "re_captured":
+                self EXP_updateEXP(level.exp_killvalue);
+                self EXP_HudPop(level.exp_killvalue);
+                text = game["exp_captureText"];
+                break;
+            case "radio_captured":
+                self EXP_updateEXP(level.exp_killvalue);
+                self EXP_HudPop(level.exp_killvalue);
+                text = game["exp_captureRadioText"];
+                break;
+            case "radio_destroyed":
+                self EXP_updateEXP(level.exp_killvalue);
+                self EXP_HudPop(level.exp_killvalue);
+                text = game["exp_destroyRadioText"];
+                break;
+            case "radio_hold":
+                self EXP_updateEXP(level.exp_assistvalue);
+                self EXP_HudPop(level.exp_assistvalue);
+                text = game["exp_holdRadioText"];
+                break;
+        }
+        self EXP_HudSlam(text); //TODO implement significant notification menu
+        self.notification = undefined;
+    }
 }
 
 createEXPHUD()
@@ -324,7 +463,7 @@ createEXPHUD()
     textOptions["x"] = 570;
     textOptions["y"] = 473;
     textOptions["fontscale"] = 0.45;
-    textOptions["color"] = (.5,.5,.5);
+    //textOptions["color"] = (.5,.5,.5);
     textOptions["sort"] = 2; //draw ontop of bar
 
     if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardiv")))
