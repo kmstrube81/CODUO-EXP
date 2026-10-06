@@ -130,7 +130,7 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     attackerNum = attacker getEntityNumber();
     
     killxp = level.exp_killvalue;
-    if(attacker.pers["team"] == self.pers["team"] && !level.uox_teamplay)
+    if(attacker.pers["team"] == self.pers["team"] && level.uox_teamplay)
         killxp = killxp * -1;
 
     botMultiplier = 1;
@@ -190,7 +190,7 @@ EXP_PopAssists(damage)
         return;
         
     assistxp = level.exp_assistvalue;
-    if(damage["attacker"].pers["team"] == damage["victim"].pers["team"])
+    if(damage["attacker"].pers["team"] == damage["victim"].pers["team"] && level.uox_teamplay)
         assistxp = assistxp * -1; 
 
     botMultiplier = 1;
@@ -322,7 +322,7 @@ createEXPHUD()
 	//test if element already exists, don't spam hud updates
 	if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bar")))
 		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bar",
-			"shader", "black", barOptions);
+			"shader", "white", barOptions);
 			
     //if text exists, add it to the progress bar
     
@@ -332,7 +332,7 @@ createEXPHUD()
     textOptions["x"] = 570;
     textOptions["y"] = 474;
     textOptions["fontscale"] = 0.5;
-    //textOptions["color"] = (.5,.5,.5);
+    textOptions["color"] = (.5,.5,.5);
 
     if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardiv")))
 	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardiv",
