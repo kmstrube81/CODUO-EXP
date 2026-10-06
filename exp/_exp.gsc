@@ -142,6 +142,7 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     //remove the killer from the assist array
     self.assistDamage = maps\mp\uox\_uox_arrays::arrayPop(self.assistDamage, attackerNum);
     
+    attacker.pers["exp"] += killxp; //give kill xp
     //pop the xp text on the killing player 
     attacker thread EXP_HudPop(killxp);
 
@@ -165,7 +166,9 @@ EXP_PlayerDisconnect()
 
 EXP_LoadPlayerLevel()
 {
+	self.pers["level"] = 1;
     self exp\_query::load("exp", "Experience");
+    self.pers["level"] = getLevel(self.pers["exp"]);
 }
 
 updateKillValue(xp)
@@ -203,6 +206,8 @@ EXP_PopAssists(damage)
         
     if(damage["damage"] < 50) //return if damage wasn't more than 50
         return;
+        
+	damage["attacker"].pers["exp"] += assistxp; //give assist xp 
         
     damage["attacker"] thread EXP_HudPop(assistxp);   
 }
@@ -284,7 +289,7 @@ createEXPHUD()
 	backgroundOptions["alignY"] = "middle";
 	backgroundOptions["x"] = 519;
 	backgroundOptions["y"] = 475;
-	backgroundOptions["height"] = 5;
+	backgroundOptions["height"] = 7;
 	backgroundOptions["width"] = (barsize + 2);
 	
 	barOptions = [];
@@ -294,7 +299,7 @@ createEXPHUD()
 	barOptions["y"] = 475;
     barOptions["color"] = ( 0.53, 0.87, 0.96 );
 	barOptions["alpha"] = 1;
-	barOptions["height"] = 3;
+	barOptions["height"] = 5;
 	barOptions["width"] = 0;
 	
 	//test if element already exists, don't spam hud updates
@@ -315,7 +320,7 @@ createEXPHUD()
     textOptions["x"] = 570;
     textOptions["y"] = 475;
     textOptions["fontscale"] = 0.5;
-    textOptions["color"] = (.5,.5,.5);
+    //textOptions["color"] = (.5,.5,.5);
 
     if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardiv")))
 	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardiv",
@@ -323,15 +328,25 @@ createEXPHUD()
 
     textOptions["alignX"] = "right";
     textOptions["x"] = 569;
-    if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_barnum")))
-	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_barnum",
+    self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_barnum",
 		"number", self.pers["exp"], textOptions);
 
     textOptions["alignX"] = "left";
     textOptions["x"] = 571;
-    if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardenom")))
-	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
-		"number", getLevelExperience( ( getLevel(self.pers["exp"]) + 1 ) ), textOptions);
+    
+    denom = self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardenom");
+    if(!isDefined(denom))
+    {
+		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
+			"number", getLevelExperience( ( self.pers["level"] + 1 ) ), textOptions);
+		denom.level = self.pers["level"];
+	}
+	else if(self.pers["level"] != denom.level)
+	{
+		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
+			"number", getLevelExperience( ( self.pers["level"] + 1 ) ), textOptions);
+		denom.level = self.pers["level"];
+	}
     
     /*
     if(isDefined(time))
@@ -360,6 +375,8 @@ deleteEXPHUD()
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_barbackground");
 	self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_bar");
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_bardiv");
+    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_barnum");
+    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_bardenom");
 
 }
 
