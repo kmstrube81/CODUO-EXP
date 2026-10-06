@@ -51,7 +51,10 @@ timeout(prop, propName)
 
 loadZero(prop)
 {
-	self.pers["temp " + prop] = 0;
+    if(isDefined(self.pers[prop]))
+        self.pers["temp " + prop] = self.pers[prop];
+    else 
+        self.pers["temp " + prop] = 0;
 
 	wait level.frametime; // wait a frame before sending notify
 

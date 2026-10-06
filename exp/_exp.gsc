@@ -207,7 +207,7 @@ EXP_PopAssists(damage)
     if(damage["damage"] < 50) //return if damage wasn't more than 50
         return;
         
-	damage["attacker"].pers["exp"] += assistxp; //give assist xp 
+	damage["attacker"] EXP_updateEXP(assistxp); //give assist xp 
         
     damage["attacker"] thread EXP_HudPop(assistxp);   
 }
@@ -253,9 +253,9 @@ EXP_HudPop(value)
         
     self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", element.exp_value, options); 
         
-    self thread maps\mp\uox\_uox_hud::popText(element, 1.5);
+    self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_pop", "popText", options, 1.5);
     if(isDefined(sign))
-        self thread maps\mp\uox\_uox_hud::popText(_element, 1.5);
+        self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_pop+", "popText", _options, 1.5);
  
     wait 1.5;
     element fadeOverTime(0.5);
@@ -269,6 +269,13 @@ EXP_HudPop(value)
     wait 0.5;
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop");
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop+");
+}
+
+EXP_updateEXP(xp)
+{
+    self.pers["exp"] += xp;
+
+    self.pers["level"] = getLevel(self.pers["exp"]);
 }
 
 updateEXPHUD()
@@ -340,6 +347,7 @@ createEXPHUD()
     denom = self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardenom");
     if(!isDefined(denom))
     {
+        xp = getLevelExperience( ( self.pers["level"] + 1 ) );
 		denom = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
 			"number", xp, textOptions);
 		denom.lvl = self.pers["level"];
@@ -362,34 +370,17 @@ createEXPHUD()
 			"shader", "white", backgroundOptions);
 
 	//test if element already exists, don't spam hud updates
-	if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bar")) || updateBar)
-		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bar",
-			"shader", "white", barOptions);
-			
-    
-
-    
-
-    
-    /*
-    if(isDefined(time))
+	if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bar")))
     {
-        if(time > timer)
-            time = timer;
-        barOptions["width"] = (barsize * time/timer);
-        self updateClientHUDElement("progressbar",
-			"shader", "white", barOptions);
+        self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bar",
+            "shader", "white", barOptions);
     }
-    else
+    else if(updateBar)
     {
-        barAnimOptions = [];
-    	barAnimOptions["height"] = 8;
-    	barAnimOptions["width"] = barsize;
-        self maps\mp\uox\_uox_hud::animateClientHUDElement("progressbar", "scaleShader",
-            barAnimOptions, timer);
+        self maps\mp\uox\_uox_hud::animateClientHUDElement("exp_bar",
+            "scaleShader", barOptions, (level.framerate/4) * level.frametime);
     }
-    */
-
+    
 }
 
 deleteEXPHUD()
