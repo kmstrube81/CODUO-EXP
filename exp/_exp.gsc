@@ -288,7 +288,7 @@ createEXPHUD()
 	backgroundOptions["alignX"] = "left";
 	backgroundOptions["alignY"] = "middle";
 	backgroundOptions["x"] = 519;
-	backgroundOptions["y"] = 475;
+	backgroundOptions["y"] = 474;
 	backgroundOptions["height"] = 7;
 	backgroundOptions["width"] = (barsize + 2);
 	
@@ -296,11 +296,23 @@ createEXPHUD()
 	barOptions["alignX"] = "right";
 	barOptions["alignY"] = "middle";
 	barOptions["x"] = 620;
-	barOptions["y"] = 475;
+	barOptions["y"] = 474;
     barOptions["color"] = ( 0.53, 0.87, 0.96 );
 	barOptions["alpha"] = 1;
 	barOptions["height"] = 5;
-	barOptions["width"] = 0;
+
+    denom = self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardenom");
+    if(isDefined(denom))
+    {
+        width = 100 * ( self.pers["exp"] / ( denom.exp * 1.0 ) ); 
+    }
+    else
+    {
+        xp = getLevelExperience( ( self.pers["level"] + 1 ) );
+        width = 100 * ( self.pers["exp"] / ( xp * 1.0 ) );
+    }
+
+	barOptions["width"] = width;
 	
 	//test if element already exists, don't spam hud updates
 	if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_barbackground")))
@@ -318,7 +330,7 @@ createEXPHUD()
     textOptions["alignX"] = "center";
     textOptions["alignY"] = "middle";
     textOptions["x"] = 570;
-    textOptions["y"] = 475;
+    textOptions["y"] = 474;
     textOptions["fontscale"] = 0.5;
     //textOptions["color"] = (.5,.5,.5);
 
@@ -334,18 +346,20 @@ createEXPHUD()
     textOptions["alignX"] = "left";
     textOptions["x"] = 571;
     
-    denom = self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardenom");
     if(!isDefined(denom))
     {
 		denom = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
-			"number", getLevelExperience( ( self.pers["level"] + 1 ) ), textOptions);
+			"number", xp, textOptions);
 		denom.lvl = self.pers["level"];
+        denom.exp = xp;
 	}
 	else if(self.pers["level"] != denom.lvl)
 	{
+        xp = getLevelExperience( ( self.pers["level"] + 1 ) );
 		denom = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
-			"number", getLevelExperience( ( self.pers["level"] + 1 ) ), textOptions);
+			"number", , textOptions);
 		denom.lvl = self.pers["level"];
+        denom.exp = xp;
 	}
     
     /*
