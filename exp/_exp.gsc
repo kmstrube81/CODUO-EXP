@@ -275,12 +275,12 @@ EXP_updateEXP(xp)
 {
     self.pers["exp"] += xp;
 
-    level = getLevel(self.pers["exp"]);
+    lvl = getLevel(self.pers["exp"]);
 
-    if(level != self.pers["level"])
+    if(lvl != self.pers["level"])
     {
-        maps\mp\uox\_uox_debug::debugLog("debug", self.name + " promoted from level " + self.pers["level"] + " to level " + level); 
-        self.pers["level"] = level;
+        maps\mp\uox\_uox_debug::debugLog("debug", self.name + " promoted from level " + self.pers["level"] + " to level " + lvl); 
+        self.pers["level"] = lvl;
     }
 }
 
