@@ -318,6 +318,30 @@ EXP_HudPop(value)
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_pop+");
 }
 
+EXP_HudSlam(text)
+{
+    self notify("exp_pop");
+    self endon("exp_pop");
+    self endon("hud_clear");
+
+    options = [];
+    options["x"] = 320;
+    options["y"] = 158;
+    options["alignX"] = "center";
+    options["alignY"] = "middle";
+    options["alpha"] = 0;
+
+    element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_notification", "text", text, options);
+        
+    maps\mp\uox\_uox_debug::debugLog("debug", self.name + " create notification slam that says " + text); 
+    
+    self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_notification", "slamText", options, 1.5);
+    wait 1.5;
+    element fadeOverTime(0.5);
+    wait 0.5;
+    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_notification");
+}
+
 EXP_updateEXP(xp)
 {
     self.pers["exp"] += xp;
@@ -357,76 +381,76 @@ updateEXPHUD()
                 break;
             case "bomb_plant":
                 self EXP_updateEXP(level.exp_killvalue);
-                self EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue);
                 text = game["bombPlantedText"];
                 break;
             case "bomb_defuse":
                 self EXP_updateEXP(level.exp_killvalue);
-                self EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue);
                 text = game["bombDefusedText"];
                 break;
             case "flag_take":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue);
                 text = game["exp_takeFlagText"];
                 break;
             case "flag_returned":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue);
                 text = game["exp_returnFlagText"];
                 break;
             case "flag_captured":
                 self EXP_updateEXP(level.exp_killvalue);
-                self EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue);
                 text = game["exp_captureFlagText"];
                 break;
             case "flag_defense":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue);
                 text = game["exp_defendFlagText"];
                 break;
             case "flag_assist":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue);
                 text = game["exp_assistFlagText"];
                 break;
             case "bel_survived":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue);
                 text = game["exp_survivedText"];
                 break;
             case "bel_kill_allied":
                 self EXP_updateEXP(level.exp_killvalue);
-                self EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue);
                 text = game["exp_killAlliedText"];
                 break;
             case "re_pickup":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue);
                 text = game["exp_pickupText"];
                 break;
             case "re_captured":
                 self EXP_updateEXP(level.exp_killvalue);
-                self EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue);
                 text = game["exp_captureText"];
                 break;
             case "radio_captured":
                 self EXP_updateEXP(level.exp_killvalue);
-                self EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue);
                 text = game["exp_captureRadioText"];
                 break;
             case "radio_destroyed":
                 self EXP_updateEXP(level.exp_killvalue);
-                self EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue);
                 text = game["exp_destroyRadioText"];
                 break;
             case "radio_hold":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue);
                 text = game["exp_holdRadioText"];
                 break;
         }
-        self EXP_HudSlam(text); //TODO implement significant notification menu
+        self thread EXP_HudSlam(text); //TODO implement significant notification menu
         self.notification = undefined;
     }
 }
