@@ -357,7 +357,7 @@ createEXPHUD()
 	{
         xp = getLevelExperience( ( self.pers["level"] + 1 ) );
 		denom = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
-			"number", , textOptions);
+			"number", xp, textOptions);
 		denom.lvl = self.pers["level"];
         denom.exp = xp;
 	}
