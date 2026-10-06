@@ -297,13 +297,13 @@ createEXPHUD()
 	barOptions["width"] = 0;
 	
 	//test if element already exists, don't spam hud updates
-	if(!isDefined(self getClientHUDElement("exp_barbackground")))
-		self updateClientHUDElement("exp_barbackground",
+	if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_barbackground")))
+		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_barbackground",
 			"shader", "white", backgroundOptions);
 
 	//test if element already exists, don't spam hud updates
-	if(!isDefined(self getClientHUDElement("exp_bar")))
-		self updateClientHUDElement("exp_bar",
+	if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bar")))
+		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bar",
 			"shader", "black", barOptions);
 			
     //if text exists, add it to the progress bar
@@ -316,8 +316,8 @@ createEXPHUD()
     textOptions["fontscale"] = 0.5;
     textOptions["color"] = (.5,.5,.5);
 
-    if(!isDefined(self getClientHUDElement("exp_bardiv")))
-	self updateClientHUDElement("exp_bardiv",
+    if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardiv")))
+	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardiv",
 		"text", game["dividerText"], textOptions);
     
     /*
@@ -344,8 +344,8 @@ createEXPHUD()
 deleteEXPHUD()
 {
 
-    self deleteClientHUDElement("exp_barbackground");
-	self deleteClientHUDElement("exp_bar");
-    self deleteClientHUDElement("exp_bardiv");
+    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_barbackground");
+	self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_bar");
+    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_bardiv");
 
 }
