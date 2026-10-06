@@ -275,7 +275,13 @@ EXP_updateEXP(xp)
 {
     self.pers["exp"] += xp;
 
-    self.pers["level"] = getLevel(self.pers["exp"]);
+    level = getLevel(self.pers["exp"]);
+
+    if(level != self.pers["level"])
+    {
+        maps\mp\uox\_uox_debug::debugLog("debug", self.name + " promoted from level " + self.pers["level"] + " to level " + level); 
+        self.pers["level"] = level;
+    }
 }
 
 updateEXPHUD()
@@ -299,6 +305,7 @@ createEXPHUD()
 	backgroundOptions["y"] = 474;
 	backgroundOptions["height"] = 7;
 	backgroundOptions["width"] = (barsize + 2);
+    backgroundOptions["sort"] = 2;
 	
 	barOptions = [];
 	barOptions["alignX"] = "right";
@@ -308,6 +315,7 @@ createEXPHUD()
     barOptions["color"] = ( 0.53, 0.87, 0.96 );
 	barOptions["alpha"] = 1;
 	barOptions["height"] = 5;
+    barOptions["sort"] = 1;
 
     //if text exists, add it to the progress bar
     textOptions = [];
@@ -317,7 +325,7 @@ createEXPHUD()
     textOptions["y"] = 473;
     textOptions["fontscale"] = 0.45;
     textOptions["color"] = (.5,.5,.5);
-    textOptions["sort"] = -1; //draw ontop of bar
+    textOptions["sort"] = 0; //draw ontop of bar
 
     if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardiv")))
 	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardiv",
