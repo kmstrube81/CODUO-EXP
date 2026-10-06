@@ -283,7 +283,8 @@ createEXPHUD()
 {
 
     barsize = 100;
-	
+	updateBar = false;
+
 	backgroundOptions = [];
 	backgroundOptions["alignX"] = "left";
 	backgroundOptions["alignY"] = "middle";
@@ -301,38 +302,15 @@ createEXPHUD()
 	barOptions["alpha"] = 1;
 	barOptions["height"] = 5;
 
-    denom = self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardenom");
-    if(isDefined(denom))
-    {
-        width = 100 * ( self.pers["exp"] / ( denom.exp * 1.0 ) ); 
-    }
-    else
-    {
-        xp = getLevelExperience( ( self.pers["level"] + 1 ) );
-        width = 100 * ( self.pers["exp"] / ( xp * 1.0 ) );
-    }
-
-	barOptions["width"] = width;
-	
-	//test if element already exists, don't spam hud updates
-	if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_barbackground")))
-		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_barbackground",
-			"shader", "white", backgroundOptions);
-
-	//test if element already exists, don't spam hud updates
-	if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bar")))
-		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bar",
-			"shader", "white", barOptions);
-			
     //if text exists, add it to the progress bar
-    
     textOptions = [];
     textOptions["alignX"] = "center";
     textOptions["alignY"] = "middle";
     textOptions["x"] = 570;
-    textOptions["y"] = 474;
-    textOptions["fontscale"] = 0.5;
+    textOptions["y"] = 473;
+    textOptions["fontscale"] = 0.45;
     textOptions["color"] = (.5,.5,.5);
+    textOptions["sort"] = -1; //draw ontop of bar
 
     if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardiv")))
 	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardiv",
@@ -340,12 +318,26 @@ createEXPHUD()
 
     textOptions["alignX"] = "right";
     textOptions["x"] = 569;
-    self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_barnum",
-		"number", self.pers["exp"], textOptions);
 
+    num = self maps\mp\uox\_uox_hud::getClientHUDElement("exp_barnum");
+    if(!isDefined(num))
+    {
+        num = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_barnum",
+            "number", self.pers["exp"], textOptions);
+        num.exp = self.pers["exp"];
+    }
+    else if(num.exp != self.pers["exp"])
+    {
+        num = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_barnum",
+            "number", self.pers["exp"], textOptions);
+        num.exp = self.pers["exp"];
+        updateBar = true;
+    }
+    
     textOptions["alignX"] = "left";
     textOptions["x"] = 571;
-    
+
+    denom = self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardenom");
     if(!isDefined(denom))
     {
 		denom = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
@@ -361,6 +353,23 @@ createEXPHUD()
 		denom.lvl = self.pers["level"];
         denom.exp = xp;
 	}
+    width = 100 * ( self.pers["exp"] / ( denom.exp * 1.0 ) );
+	barOptions["width"] = width;
+
+	//test if element already exists, don't spam hud updates
+	if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_barbackground")))
+		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_barbackground",
+			"shader", "white", backgroundOptions);
+
+	//test if element already exists, don't spam hud updates
+	if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bar")) || updateBar)
+		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bar",
+			"shader", "white", barOptions);
+			
+    
+
+    
+
     
     /*
     if(isDefined(time))
