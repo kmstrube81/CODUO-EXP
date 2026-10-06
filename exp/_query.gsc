@@ -102,9 +102,9 @@ waitForResult(prop, queryID, timeout)
 	{
 		query_result = getCvar("query_result");
 		//if the queryID matches
-		if(maps\mp\uox\_uox::findStr(queryID, query_result, "start") > -1)
+		if(maps\mp\uox\_uox_utils::findStr(queryID, query_result, "start") > -1)
         {
-            self.pers["temp " + prop] = maps\mp\uox\_uox::stringSplit(query_result)[1];
+            self.pers["temp " + prop] = maps\mp\uox\_uox_utils::stringSplit(query_result)[1];
             self notify("load_result " + prop);
             return;
         }
