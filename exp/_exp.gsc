@@ -337,13 +337,13 @@ createEXPHUD()
     denom = self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardenom");
     if(!isDefined(denom))
     {
-		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
+		denom = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
 			"number", getLevelExperience( ( self.pers["level"] + 1 ) ), textOptions);
 		denom.lvl = self.pers["level"];
 	}
 	else if(self.pers["level"] != denom.lvl)
 	{
-		self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
+		denom = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
 			"number", getLevelExperience( ( self.pers["level"] + 1 ) ), textOptions);
 		denom.lvl = self.pers["level"];
 	}
