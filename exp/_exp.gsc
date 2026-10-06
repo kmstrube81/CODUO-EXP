@@ -331,7 +331,7 @@ createEXPHUD()
     textOptions["x"] = 571;
     if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardenom")))
 	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
-		"text", getLevelExperience( ( getLevel(self.pers["exp"]) + 1 ) ), textOptions);
+		"number", getLevelExperience( ( getLevel(self.pers["exp"]) + 1 ) ), textOptions);
     
     /*
     if(isDefined(time))
