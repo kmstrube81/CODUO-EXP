@@ -305,7 +305,7 @@ createEXPHUD()
 	backgroundOptions["y"] = 474;
 	backgroundOptions["height"] = 7;
 	backgroundOptions["width"] = (barsize + 2);
-    backgroundOptions["sort"] = 2;
+    backgroundOptions["sort"] = 0;
 	
 	barOptions = [];
 	barOptions["alignX"] = "right";
@@ -325,7 +325,7 @@ createEXPHUD()
     textOptions["y"] = 473;
     textOptions["fontscale"] = 0.45;
     textOptions["color"] = (.5,.5,.5);
-    textOptions["sort"] = 0; //draw ontop of bar
+    textOptions["sort"] = 2; //draw ontop of bar
 
     if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardiv")))
 	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardiv",
