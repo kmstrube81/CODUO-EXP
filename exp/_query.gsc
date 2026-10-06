@@ -26,7 +26,7 @@ load(prop, propName, timeout)
 			break;
 	}
 	
-	self thread timeout();
+	self thread timeout(prop, propName);
     
     self endon("load_timeout " + prop);
     self waittill("load_result " + prop);
