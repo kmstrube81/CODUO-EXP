@@ -283,16 +283,17 @@ createEXPHUD()
 	backgroundOptions["alignX"] = "left";
 	backgroundOptions["alignY"] = "middle";
 	backgroundOptions["x"] = 519;
-	backgroundOptions["y"] = 470;
+	backgroundOptions["y"] = 475;
 	backgroundOptions["height"] = 5;
 	backgroundOptions["width"] = (barsize + 2);
 	
 	barOptions = [];
 	barOptions["alignX"] = "right";
 	barOptions["alignY"] = "middle";
-	barOptions["x"] = 520;
-	barOptions["y"] = 470;
-	backgroundOptions["alpha"] = 0.5;
+	barOptions["x"] = 620;
+	barOptions["y"] = 475;
+    barOptions["color"] = ( 0.53, 0.87, 0.96 );
+	barOptions["alpha"] = 1;
 	barOptions["height"] = 3;
 	barOptions["width"] = 0;
 	
@@ -312,13 +313,25 @@ createEXPHUD()
     textOptions["alignX"] = "center";
     textOptions["alignY"] = "middle";
     textOptions["x"] = 570;
-    textOptions["y"] = 470;
+    textOptions["y"] = 475;
     textOptions["fontscale"] = 0.5;
     textOptions["color"] = (.5,.5,.5);
 
     if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardiv")))
 	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardiv",
 		"text", game["dividerText"], textOptions);
+
+    textOptions["alignX"] = "right";
+    textOptions["x"] = 569;
+    if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_barnum")))
+	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_barnum",
+		"number", self.pers["exp"], textOptions);
+
+    textOptions["alignX"] = "left";
+    textOptions["x"] = 571;
+    if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardenom")))
+	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
+		"text", getLevelExperience( ( getLevel(self.pers["exp"]) + 1 ) ), textOptions);
     
     /*
     if(isDefined(time))
@@ -349,3 +362,50 @@ deleteEXPHUD()
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_bardiv");
 
 }
+
+// Returns the total XP needed to be at least level lvl.
+getLevelExperience(lvl)
+{
+	if(lvl <= 1)
+		return 0;
+
+	b = (lvl - 1) / 20;
+
+	a = 30 + 10 * b;
+	beta = -60 - 10 * b - 200 * b * (b + 1);
+
+	// b(b+1)(2b+1) is always divisible by 6, so multiply first, then divide
+	c = 30 + 100 * b * (b + 1) + 4000 * (b * (b + 1) * (2 * b + 1) / 6);
+
+	return a * lvl * lvl + beta * lvl + c;
+}
+
+// Returns the current level for a given total XP.
+getLevel(xp)
+{
+	if(xp <= 0)
+		return 1;
+
+	// find bounds where getLevelExperience(lo) <= xp < getLevelExperience(hi)
+	lo = 1;
+	hi = 2;
+	while(getLevelExperience(hi) <= xp)
+	{
+		lo = hi;
+		hi = hi * 2;
+	}
+
+	// binary search between them
+	while(hi - lo > 1)
+	{
+		mid = (lo + hi) / 2;
+
+		if(getLevelExperience(mid) <= xp)
+			lo = mid;
+		else
+			hi = mid;
+	}
+
+	return lo;
+}
+
