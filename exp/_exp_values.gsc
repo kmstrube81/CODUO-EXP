@@ -98,16 +98,16 @@ getValues()
     keys = [];
     guids = [];
     /* ***************** PASTE VALUES FROM LOG BELOW THIS LINE *********************** */
-    keys[0] = 'exp';
-    keys[1] = 'exp_kills';
-    keys[2] = 'exp_death';
+    keys[0] = "exp";
+    keys[1] = "exp_kills";
+    keys[2] = "exp_death";
     guids[0] = 0;
-    array['exp'] = [];
-    array['exp_kills'] = [];
-    array['exp_deaths'] = [];
-    array['exp'][0] = 0;
-    array['exp_kills'][0] = 0;
-    array['exp_deaths'][0] = 0;
+    array["exp"] = [];
+    array["exp_kills"] = [];
+    array["exp_deaths"] = [];
+    array["exp"][0] = 0;
+    array["exp_kills"][0] = 0;
+    array["exp_deaths"][0] = 0;
     /* ***************** PASTE VALUES FROM LOG ABOVE THIS LINE *********************** */
 
     if(!isDefined(game["loadGsc"]))
@@ -145,12 +145,12 @@ logValues()
     for(i = 0; i < keys.size; i++)
     {
          key = keys[i];
-         logPrint("\n    keys[" + i + "] = '" + key + "';");
+         logPrint("\n    keys[" + i + "] = \"" + key + "\";");
     }
     for(i = 0; i < guids.size; i++)
     {
         guid = guids[i];
-        logPrint("\n    guids[" + i + "] = '" + guid + "';");
+        logPrint("\n    guids[" + i + "] = \"" + guid + "\";");
     }
 
     for(i = 0; i < keys.size; i++)
@@ -161,7 +161,7 @@ logValues()
             guid = guids[j];
             if(isDefined(array[key][guid]))
             {
-                logPrint("\n    array['" + key + "'][" + guid + "] = " + array[key][guid] + ";");
+                logPrint("\n    array[\"" + key + "\"][" + guid + "] = " + array[key][guid] + ";");
             }
         }
     }
