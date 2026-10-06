@@ -142,7 +142,7 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     //remove the killer from the assist array
     self.assistDamage = maps\mp\uox\_uox_arrays::arrayPop(self.assistDamage, attackerNum);
     
-    attacker.pers["exp"] += killxp; //give kill xp
+    attacker EXP_updateEXP(killxp); //give kill xp
     //pop the xp text on the killing player 
     attacker thread EXP_HudPop(killxp);
 
