@@ -167,6 +167,9 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     if(!isDefined(attacker) || !isPlayer(attacker))
         return;	
 		
+	//reset killstreak at this point
+    self.pers["killstreak"] = undefined;
+		
     if(isPlayer(attacker) && (attacker == self))
     	    return;
     	    
@@ -197,6 +200,22 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     thread maps\mp\uox\_uox_arrays::arrayReadEach(self.assistDamage, ::EXP_PopAssists);
     //delete the array
     self.assistDamage = undefined;
+    
+    //record kill for killstreak tracking
+    if(!isDefined(attacker.pers["killstreak"]))
+        attacker.pers["killstreak"] = maps\mp\uox\_uox_arrays::superArray();
+    time = getTime();
+    
+    //create new entry
+    kill = [];
+    kill["weapon"] = sWeapon;
+    kill["victim"] = self.name;
+    kill["time"] = time;
+        
+    attacker.pers["killstreak"] = maps\mp\uox\_uox_arrays::arrayPush(attacker.pers["killstreak"], kill);
+    
+    //check for multikill/killstreak
+    attacker EXP_CheckKillstreak();
 }
 
 EXP_PlayerConnect()
@@ -379,6 +398,14 @@ updateEXPHUD()
                 self EXP_updateEXP(level.exp_killvalue);
                 text = game["exp_multiKillText"];
                 break;
+            case "bloodthirsty":
+                self EXP_updateEXP(level.exp_killvalue);
+                text = game["exp_fiveKillText"];
+                break;
+            case "killing_spree":
+                self EXP_updateEXP(level.exp_killvalue);
+                text = game["exp_tenKillText"];
+                break; 
             case "bomb_plant":
                 self EXP_updateEXP(level.exp_killvalue);
                 self thread EXP_HudPop(level.exp_killvalue);
@@ -460,7 +487,8 @@ createEXPHUD()
 
     barsize = 100;
 	updateBar = false;
-
+    overflow = false;
+    
 	backgroundOptions = [];
 	backgroundOptions["alignX"] = "left";
 	backgroundOptions["alignY"] = "middle";
@@ -531,9 +559,15 @@ createEXPHUD()
 			"number", xp, textOptions);
 		denom.lvl = self.pers["level"];
         denom.exp = xp;
+        overflow = true;
 	}
     width = 100 * ( self.pers["exp"] / ( denom.exp * 1.0 ) );
-	barOptions["width"] = width;
+    if(width == 0)
+        barOptions["width"] = 1;
+    else if (overflow)
+        barOptions["width"] = 100;
+    else 
+	    barOptions["width"] = width;
 
 	//test if element already exists, don't spam hud updates
 	if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_barbackground")))
@@ -548,8 +582,21 @@ createEXPHUD()
     }
     else if(updateBar)
     {
-        self maps\mp\uox\_uox_hud::animateClientHUDElement("exp_bar",
-            "scaleShader", barOptions, (level.framerate/4) * level.frametime);
+        if(overflow) //fill bar and then animate to new spot on exp bar
+        {
+            self maps\mp\uox\_uox_hud::animateClientHUDElement("exp_bar",
+                "scaleShader", barOptions, (level.framerate/4) * (level.frametime/2));
+            barOptions["width"] = 1;
+            wait (level.framerate/4) * (level.frametime/2);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bar",
+            "shader", "white", barOptions);
+            barOptions["width"] = width;
+            self maps\mp\uox\_uox_hud::animateClientHUDElement("exp_bar",
+                "scaleShader", barOptions, (level.framerate/4) * (level.frametime/2));
+        }
+        else
+            self maps\mp\uox\_uox_hud::animateClientHUDElement("exp_bar",
+                "scaleShader", barOptions, (level.framerate/4) * level.frametime);
     }
     
 }
@@ -563,6 +610,40 @@ deleteEXPHUD()
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_barnum");
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_bardenom");
 
+}
+
+EXP_CheckKillstreak()
+{
+    //abort if no killstreak
+    if(!isDefined(self.pers["killstreak"]))
+        return;
+    //get last kill time
+    kill = maps\mp\uox\_uox_arrays::getPreviousValue(self.pers["killstreak"]);
+    time = kill["time"];
+    count = 0;
+    killstreak = self.pers["killstreak"]["length"];
+    killtime = time;
+    //check for multi kill (multiple kills within 2 seconds of last kill)
+    while(time - killtime)/1000 < 2 )
+    {
+        count++;
+        kill = maps\mp\uox\_uox_arrays::getPreviousValue(self.pers["killstreak"],
+            killstreak - count);
+        if(!isDefined(kill))
+            break;
+        killtime = kill["time"]; 
+    }
+    if(count == 2)
+        self.notification = "double_kill";
+    else if(count == 3)
+        self.notification = "triple_kill";
+    if(killstreak == 5)
+        self.notification = "bloodthirsty";
+    if(count > 3)
+        self.notification = "multi_kill"; 
+    if(killstreak == 10)
+        self.notification = "killing_spree";
+    
 }
 
 // Returns the total XP needed to be at least level lvl.
