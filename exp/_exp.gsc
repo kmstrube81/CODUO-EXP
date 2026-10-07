@@ -628,14 +628,16 @@ EXP_CheckKillstreak()
     killstreak = self.pers["killstreak"]["length"];
     killtime = time;
     //check for multi kill (multiple kills within 2 seconds of last kill)
-    while((time - killtime)/1000 < 2 && count < killstreak)
+    while(count < killstreak)
     {
         count++;
         kill = maps\mp\uox\_uox_arrays::getPreviousValue(self.pers["killstreak"],
             killstreak - count);
         if(!isDefined(kill))
             break;
-        killtime = kill["time"]; 
+        killtime = kill["time"];
+        if((time - killtime)/1000 > 2 )
+            break; 
     }
     if(count == 2)
         self.notification = "double_kill";
