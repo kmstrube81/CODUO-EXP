@@ -343,8 +343,8 @@ EXP_HudPop(value)
 
 EXP_HudSlam(text)
 {
-    self notify("exp_pop");
-    self endon("exp_pop");
+    self notify("exp_slam");
+    self endon("exp_slam");
     self endon("hud_clear");
 
     options = [];
