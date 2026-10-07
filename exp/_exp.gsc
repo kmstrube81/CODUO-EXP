@@ -32,9 +32,13 @@ EXP_Precache()
     game["exp_doubleKillText"] = &"Double Kill";
     game["exp_tripleKillText"] = &"Triple Kill";
     game["exp_multiKillText"] = &"Multi Kill";
+    game["exp_fiveKillText"] = &"Bloodthirsty";
+    game["exp_tenKillText"] = &"Killing Spree";
     precacheString(game["exp_doubleKillText"]);
     precacheString(game["exp_tripleKillText"]);
     precacheString(game["exp_multiKillText"]);
+    precacheString(game["exp_fiveKillText"]);
+    precacheString(game["exp_tenKillText"]);
     switch(level.objective)
     {
         case "ctf":
@@ -624,7 +628,7 @@ EXP_CheckKillstreak()
     killstreak = self.pers["killstreak"]["length"];
     killtime = time;
     //check for multi kill (multiple kills within 2 seconds of last kill)
-    while(time - killtime)/1000 < 2 )
+    while((time - killtime)/1000 < 2 )
     {
         count++;
         kill = maps\mp\uox\_uox_arrays::getPreviousValue(self.pers["killstreak"],
