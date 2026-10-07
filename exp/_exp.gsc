@@ -636,7 +636,7 @@ EXP_CheckKillstreak()
         if(!isDefined(kill))
             break;
         killtime = kill["time"];
-        maps\mp\uox\_uox_debug::debugLog("debug", self.name + " kill #" + count + " was " +((time - killtime)/1000) + " seconds ago", "killed player", kill["victim"]);
+        maps\mp\uox\_uox_debug::debugLog("debug", self.name + " kill #" + count + " was " +((time - killtime)/1000) + " seconds ago . killed player" + kill["victim"]);
         if((time - killtime)/1000 > 2 )
             break; 
     }
