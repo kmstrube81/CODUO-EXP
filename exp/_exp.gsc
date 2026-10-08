@@ -23,6 +23,7 @@ EXP_Vars()
     level.exp_killvalue = maps\mp\uox\_uox_vars::varDef("exp", "killvalue", "int", true, 10, 0, 100, "Kill Base XP Value", ::updateKillValue);
     level.exp_assistvalue = maps\mp\uox\_uox_vars::varDef("exp", "assistvalue", "int", true, 4, 0, 100, "Kill Base Assist Value", ::updateAssistValue);
     maps\mp\uox\_uox_vars::varDef("exp", "drawexpbar", "bool", true, true, "", "", "Draw XP Bar");
+    maps\mp\uox\_uox_vars::varDef("exp", "levelsperrank", "int", false, 4, "1", "100", "Levels Per Rank");
     level.exp_drawrankicon = maps\mp\uox\_uox_vars::varDef("exp", "drawrankicon", "bool", true, true, "", "", "Draw Rank Icon", ::updateDrawRank);
     level.exp_loadtype = maps\mp\uox\_uox_vars::varDef("exp","loadtype", "int", false, 0, 0, 4);
 }
