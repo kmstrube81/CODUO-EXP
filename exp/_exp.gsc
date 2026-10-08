@@ -293,14 +293,14 @@ EXP_HudPop(value)
     options["y"] = 180;
     options["alignX"] = "left";
     options["alignY"] = "middle";
-    options["alpha"] = 0;
+    options["alpha"] = 1;
     options["fontscale"] = 1.5;
     _options = [];
     _options["x"] = 320;
     _options["y"] = 180;
     _options["alignX"] = "right";
     _options["alignY"] = "middle";
-    _options["alpha"] = 0;
+    _options["alpha"] = 1;
     _options["fontscale"] = 1.5;
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
@@ -352,7 +352,7 @@ EXP_HudSlam(text)
     options["y"] = 158;
     options["alignX"] = "center";
     options["alignY"] = "middle";
-    options["alpha"] = 0;
+    options["alpha"] = 1;
     options["fontscale"] = 1.5;
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_notification", "text", text, options);
