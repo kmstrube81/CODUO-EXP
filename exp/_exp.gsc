@@ -15,6 +15,9 @@ EXP_Init()
     level.PlayerConnect_Callbacks = maps\mp\uox\_uox_arrays::arrayPush(level.PlayerConnect_Callbacks, ::EXP_PlayerConnect);
     
     level.PlayerDisconnect_Callbacks = maps\mp\uox\_uox_arrays::arrayPush(level.PlayerDisconnect_Callbacks, ::EXP_PlayerDisconnect);
+
+    //set up level unlock array
+    level.weaponUnlocks = exp\exp_weapons::setupLevelUnlocks();
 }
 
 EXP_Vars()
@@ -26,6 +29,8 @@ EXP_Vars()
     maps\mp\uox\_uox_vars::varDef("exp", "levelsperrank", "int", false, 4, 1, 100, "Levels Per Rank");
     level.exp_drawrankicon = maps\mp\uox\_uox_vars::varDef("exp", "drawrankicon", "bool", true, true, "", "", "Draw Rank Icon", ::updateDrawRank);
     level.exp_loadtype = maps\mp\uox\_uox_vars::varDef("exp","loadtype", "int", false, 0, 0, 4);
+
+    maps\mp\uox\_uox_vars::varDef("exp", "levelunlock_all", "bool", false, true, "", "");
 }
 
 EXP_Precache()
@@ -89,10 +94,66 @@ EXP_Precache()
     }
 }
 
+EXP_DefineMenus()
+{
+    //define custom menus here
+
+    //set up menu handlers
+    if(!isDefined(game["menuHandlers"]))
+        game["menuHandlers"] = maps\mp\uox\_uox_arrays::superArray();
+    //override weapon select handling
+    //handle weapons - all
+    handlers = maps\mp\uox\_uox_arrays::getValue(game["menuHandlers"], game["menu_weapon_all"]);
+    if(!isDefined(handlers))
+    {
+        handlers = [];
+        handlers[0] = ::EXP_handleWeaponMenu;
+    }
+    else
+    {
+        handlers = maps\mp\uox\_uox_arrays::arrayPush(handlers, ::EXP_handleWeaponMenu);
+    }
+    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayPush(game["menuHandlers"], handlers, game["menu_weapon_all"]);
+    //handle weapons - allies
+    handlers = maps\mp\uox\_uox_arrays::getValue(game["menuHandlers"], game["menu_weapon_allies"]);
+    if(!isDefined(handlers))
+    {
+        handlers = [];
+        handlers[0] = ::EXP_handleWeaponMenu;
+    }
+    else
+    {
+        handlers = maps\mp\uox\_uox_arrays::arrayPush(handlers, ::EXP_handleWeaponMenu);
+    }
+    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayPush(game["menuHandlers"], handlers, game["menu_weapon_allies"]);
+    //hande weapons - axis
+    handlers = maps\mp\uox\_uox_arrays::getValue(game["menuHandlers"], game["menu_weapon_axis"]);
+    if(!isDefined(handlers))
+    {
+        handlers = [];
+        handlers[0] = ::EXP_handleWeaponMenu;
+    }
+    else
+    {
+        handlers = maps\mp\uox\_uox_arrays::arrayPush(handlers, ::EXP_handleWeaponMenu);
+    }
+    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayPush(game["menuHandlers"], handlers, game["menu_weapon_axis"]);
+
+}
+
 EXP_StartGameType()
 {
     EXP_Vars();
     EXP_Precache();
+    EXP_DefineMenus();
+}
+
+EXP_handleWeaponMenu(response, weapon)
+{
+    if(!isDefined(weapon) || weapon != "restricted") 
+        weapon = self exp\_exp_weapons::EXP_restrict(response);
+
+    return weapon;
 }
 
 EXP_PlayerDamage(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc)
@@ -249,8 +310,10 @@ EXP_PlayerDisconnect()
 EXP_LoadPlayerLevel()
 {
 	self.pers["level"] = 1;
+    self exp\_exp_weapons::EXP_checkLevelUnlocks();
     self exp\_query::load("exp", "Experience");
     self.pers["level"] = getLevel(self.pers["exp"]);
+    self exp\_exp_weapons::EXP_checkLevelUnlocks();
 }
 
 updateKillValue(xp)
@@ -294,7 +357,7 @@ updateDrawRank(drawrank)
     }
 }
 
-EXP_PopAssists(damage)
+EXP_PopAssists(damage, attackerNum)
 {
     if(!isDefined(damage["attacker"]))
         return;
@@ -422,6 +485,8 @@ EXP_updateEXP(xp)
         self notify("level updated", lvl > self.pers["level"]);
 
         self.pers["level"] = lvl;
+
+        self exp\_exp_weapons::EXP_checkLevelUnlocks();
     }
 }
 
@@ -619,6 +684,7 @@ createEXPHUD()
 		denom = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
 			"number", xp, textOptions);
 		denom.lvl = self.pers["level"];
+        denom.exp0 = getLevelExperience( ( self.pers["level"] ) );
         denom.exp = xp;
 	}
 	else if(self.pers["level"] != denom.lvl)
@@ -629,10 +695,12 @@ createEXPHUD()
         self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_lvl",
             "number", self.pers["level"], lvlOptions);
 		denom.lvl = self.pers["level"];
+        denom.exp0 = getLevelExperience( ( self.pers["level"] ) );
         denom.exp = xp;
         overflow = true;
 	}
-    width = 100 * ( self.pers["exp"] / ( denom.exp * 1.0 ) );
+    xp = denom.exp0;
+    width = 100 * ( (self.pers["exp"] - xp) / ( (denom.exp - xp) * 1.0 ) );
     if(width == 0)
         barOptions["width"] = 1;
     else if (overflow)
@@ -839,7 +907,7 @@ EXP_RankHudMonitor()
 	{
 		self waittill("level updated", direction);
 
-        if(self.pers["level"] / [[level.getVars]]("exp_levelsperrank") > max_rank)
+        if(self.pers["level"] / [[level.getVars]]("exp_levelsperrank") - 1 > max_rank)
         {
             wait level.frametime;
             continue;
@@ -868,7 +936,7 @@ EXP_GetRankStatusIcon(player)
 
     max_rank = 4;
 
-    rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank"));
+    rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank") - 1);
 
     if(rank > max_rank)
         rank = max_rank;
@@ -886,7 +954,7 @@ EXP_GetRankStatusIcon(player)
 EXP_GetRankName(player)
 {	
 
-    rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank"));
+    rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank") - 1);
 		
 	switch(rank)
     {
@@ -897,9 +965,9 @@ EXP_GetRankName(player)
         case 2:
             return "Seargant";
         case 3:
-            return "Lieutenant";
+            return "Staff Seargant";
         case 4:
-            return "Commander";
+            return "Seargant First Class";
     }
     return "DSR";
 }
