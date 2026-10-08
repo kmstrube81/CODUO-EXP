@@ -198,7 +198,7 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     if(isDefined(self.pers["isBot"]))
        botMultiplier = 0.5;
 
-    killxp = killxp * level.exp_multiplier * botMultiplier;
+    killxp = killxp * botMultiplier;
     
     //remove the killer from the assist array
     self.assistDamage = maps\mp\uox\_uox_arrays::arrayPop(self.assistDamage, attackerNum);
@@ -310,7 +310,7 @@ EXP_PopAssists(damage)
     if(isDefined(damage["victim"].pers["isBot"]))
        botMultiplier = 0.5;
 
-    assistxp = assistxp * level.exp_multiplier * botMultiplier;
+    assistxp = assistxp * botMultiplier;
 
     time = getTime();
     
