@@ -4,12 +4,13 @@ EXP_restrict(weapon)
     {
         return weapon;
     }
-    if(!isDefined(level.weaponUnlocks["weapon"][weapon]))
+    wepon = maps\mp\uox\_uox_arrays::getValue(level.weaponUnlocks, weapon);
+    if(!isDefined(wepon))
     {
         return "restricted";
     }
 
-    if(self.pers["level"] >= level.weaponUnlocks["weapon"][weapon])
+    if(self.pers["level"] >= wepon)
     {
         return weapon;
     }
