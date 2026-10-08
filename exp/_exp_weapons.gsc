@@ -40,7 +40,7 @@ setupLevelUnlocks()
     weaponUnlocks = maps\mp\uox\_uox_arrays::arrayPush(weaponUnlocks, 0, "gewehr43_mp");
     weaponUnlocks = maps\mp\uox\_uox_arrays::arrayPush(weaponUnlocks, 4, "mp40_mp");
     weaponUnlocks = maps\mp\uox\_uox_arrays::arrayPush(weaponUnlocks, 8, "mp44_mp");
-    weaponUnlocks = maps\mp\uox\_uox_arrays::arrayPush(weaponUnlocks, 12, "kar98k_sniper_mp"):
+    weaponUnlocks = maps\mp\uox\_uox_arrays::arrayPush(weaponUnlocks, 12, "kar98k_sniper_mp");
     weaponUnlocks = maps\mp\uox\_uox_arrays::arrayPush(weaponUnlocks, 16, "mg34_mp");
 
     return weaponUnlocks;
