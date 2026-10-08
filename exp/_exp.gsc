@@ -151,6 +151,9 @@ EXP_StartGameType()
 
 EXP_handleWeaponMenu(response, weapon)
 {
+    if(response == "open" || response == "close")
+        return;
+
     if(!isDefined(weapon) || weapon != "restricted") 
         weapon = self exp\_exp_weapons::EXP_restrict(response);
 
