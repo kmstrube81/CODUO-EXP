@@ -937,12 +937,14 @@ EXP_GetRankStatusIcon(player)
 
     max_rank = 4;
 
-    rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank") - 1);
+    rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank"));
 
     if(rank > max_rank)
         rank = max_rank;
 
 	icon_name = "br_hudicons_allies_" + rank;
+
+    maps\mp\uox\_uox_debug::debugLog("debug", self.name + " setting rank icon to " + icon_name);
 	
 	return game[icon_name];
 }
