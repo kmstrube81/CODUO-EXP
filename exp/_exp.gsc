@@ -17,7 +17,7 @@ EXP_Init()
     level.PlayerDisconnect_Callbacks = maps\mp\uox\_uox_arrays::arrayPush(level.PlayerDisconnect_Callbacks, ::EXP_PlayerDisconnect);
 
     //set up level unlock array
-    level.weaponUnlocks = exp\exp_weapons::setupLevelUnlocks();
+    level.weaponUnlocks = exp\_exp_weapons::setupLevelUnlocks();
 }
 
 EXP_Vars()
