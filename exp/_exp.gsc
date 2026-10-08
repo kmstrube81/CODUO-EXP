@@ -294,14 +294,14 @@ EXP_HudPop(value)
     options["alignX"] = "left";
     options["alignY"] = "middle";
     options["alpha"] = 0;
-    //options["font"] = "bigfixed";
+    options["fontscale"] = 1.5;
     _options = [];
     _options["x"] = 320;
     _options["y"] = 180;
     _options["alignX"] = "right";
     _options["alignY"] = "middle";
     _options["alpha"] = 0;
-    //_options["font"] = "bigfixed";
+    _options["fontscale"] = 1.5;
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
     
@@ -323,9 +323,9 @@ EXP_HudPop(value)
         
     self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", element.exp_value, options); 
         
-    self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_pop", "popText", options, 1.5);
+    self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_pop", "popText", options, 0.6);
     if(isDefined(sign))
-        self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_pop+", "popText", _options, 1);
+        self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_pop+", "popText", _options, 0.6);
  
     wait 1.5;
     element fadeOverTime(0.5);
@@ -353,12 +353,13 @@ EXP_HudSlam(text)
     options["alignX"] = "center";
     options["alignY"] = "middle";
     options["alpha"] = 0;
+    options["fontscale"] = 1.5;
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_notification", "text", text, options);
         
     maps\mp\uox\_uox_debug::debugLog("debug", self.name + " create notification slam"); 
     
-    self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_notification", "slamText", options, 1);
+    self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_notification", "slamText", options, 0.6);
     wait 1.5;
     element fadeOverTime(0.5);
     wait 0.5;
