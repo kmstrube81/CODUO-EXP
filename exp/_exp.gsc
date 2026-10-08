@@ -576,7 +576,7 @@ createEXPHUD()
     lvlOptions = [];
     lvlOptions["alignX"] = "right";
     lvlOptions["alignY"] = "middle";
-    lvlOptions["x"] = 518;
+    lvlOptions["x"] = 515;
     lvlOptions["y"] = 473;
     lvlOptions["fontscale"] = 0.6;
     //textOptions["color"] = (.5,.5,.5);
