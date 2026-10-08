@@ -748,10 +748,15 @@ EXP_RankHudInit()
 //
 // 		Sets up the rank hud icon to the appropriate shader for the rank
 // ----------------------------------------------------------------------------------
-EXP_RankHudSetShader(rank_change)
+EXP_RankHudSetShader(rank_change, direction )
 {
 	self endon("death");
 	self endon("rank RankHudInit");
+
+    if(!isDefined(rank_change))
+        rank_change = false;
+    if(!isDefined(direction))
+        rank_change = true;
 
     options = [];
     options["alignX"] = "center";
@@ -760,8 +765,18 @@ EXP_RankHudSetShader(rank_change)
     options["y"] = 405;
     options["alpha"] = 0.7;
 	
-	if ( isDefined(rank_change) && rank_change )
+	if ( rank_change )
 	{
+        if( direction )
+        {
+            maps\mp\gametypes\_rank_gmi::PlayPromotionSound(self);
+            iprintln(self.name + " ^7has been promoted to " + EXP_GetRankName(self) + ".");	
+        }
+        else
+        {
+            maps\mp\gametypes\_rank_gmi::PlayDemotionSound(self);
+            iprintln(self.name + " ^7was demoted to " + EXP_GetRankName(self) + ".");	
+        }
         options["width"] = 78;
         options["height"] = 96;
 		self maps\mp\uox\_uox_hud::updateClientHUDElement("rank_hud_icon", "shader", EXP_GetRankStatusIcon(self), options);
@@ -816,25 +831,25 @@ EXP_RankHudMonitor()
 {
 	self endon("death");
 	self endon("rank RankHudInit");
+
+    major_promotion = false;
+    max_rank = 4;
 	
 	while ( level.exp_drawrankicon )
 	{
 		self waittill("level updated", direction);
-		if ( direction )
+
+        if(self.pers["level"] / [[level.getVars]]("exp_levelsperrank") > max_rank)
         {
-            if(!(self.pers["level"] % [[level.getVars]]("exp_levelsperrank")) && isDefined(EXP_GetRankStatusIcon(self)))
-            {
-                maps\mp\gametypes\_rank_gmi::PlayPromotionSound(self);
-                iprintln(self.name + " ^7has been promoted to " + EXP_GetRankName(self) + ".");		
-            }
+            wait level.frametime;
+            continue;
         }
-        // or demoted?
-        else
-        {
-            maps\mp\gametypes\_rank_gmi::PlayDemotionSound(self);
-            iprintln(self.name + " ^7was demoted to " + EXP_GetRankName(self) + ".");			
-        }
-		self thread EXP_RankHudSetShader(true);
+		
+        if(!(self.pers["level"] % [[level.getVars]]("exp_levelsperrank")))
+            major_promotion = true;
+
+
+		self thread EXP_RankHudSetShader(major_promotion, direction);
 		wait level.frametime;
 	}
 	
@@ -851,8 +866,13 @@ EXP_GetRankStatusIcon(player)
 	if ( player.pers["team"] == "spectator" )
 		return "";
 
+    max_rank = 4;
+
     rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank"));
-		
+
+    if(rank > max_rank)
+        rank = max_rank;
+
 	icon_name = "br_hudicons_allies_" + rank;
 	
 	return game[icon_name];
