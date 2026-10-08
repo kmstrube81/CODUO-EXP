@@ -23,7 +23,7 @@ EXP_Vars()
     level.exp_killvalue = maps\mp\uox\_uox_vars::varDef("exp", "killvalue", "int", true, 10, 0, 100, "Kill Base XP Value", ::updateKillValue);
     level.exp_assistvalue = maps\mp\uox\_uox_vars::varDef("exp", "assistvalue", "int", true, 4, 0, 100, "Kill Base Assist Value", ::updateAssistValue);
     maps\mp\uox\_uox_vars::varDef("exp", "drawexpbar", "bool", true, true, "", "", "Draw XP Bar");
-    maps\mp\uox\_uox_vars::varDef("exp", "drawrankicon", "bool", true, true, "", "", "Draw Rank Icon");
+    level.exp_drawrankicon = maps\mp\uox\_uox_vars::varDef("exp", "drawrankicon", "bool", true, true, "", "", "Draw Rank Icon", ::updateDrawRank);
     level.exp_loadtype = maps\mp\uox\_uox_vars::varDef("exp","loadtype", "int", false, 0, 0, 4);
 }
 
@@ -260,6 +260,37 @@ updateKillValue(xp)
 updateAssistValue(xp)
 {
     level.exp_assistvalue = xp;
+}
+
+updateDrawRank(drawrank)
+{
+    level.exp_drawrankicon = drawrank;
+
+    if(level.exp_drawrankicon)
+    {
+        players = getentarray("player", "classname");
+        for(i = 0; i < players.size; i++)
+    	{
+    		player = players[i];
+
+            if ( isdefined(player.rank_hud_icon))
+                player.rank_hud_icon destroy();
+            if(isAlive(self) && self.pers["team"] != "spectator" && self.sessionstate == "playing")
+                player thread EXP_RankHudInit();
+        }
+    }
+    else
+    {
+        players = getentarray("player", "classname");
+        for(i = 0; i < players.size; i++)
+    	{
+    		player = players[i];
+            
+            player thread EXP_RankHudDestroy2();
+            if(isAlive(self) && self.pers["team"] != "spectator" && self.sessionstate == "playing")
+                maps\mp\gametypes\_rank_gmi::RankHudInit();
+        }
+    }
 }
 
 EXP_PopAssists(damage)
@@ -593,6 +624,7 @@ createEXPHUD()
 			"number", xp, textOptions);
         self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_lvl",
             "number", self.pers["level"], lvlOptions);
+        self notify("level updated", denom.lvl < self.pers["level"]);
 		denom.lvl = self.pers["level"];
         denom.exp = xp;
         overflow = true;
@@ -683,6 +715,170 @@ EXP_CheckKillstreak()
     if(killstreak == 10)
         self.notification = "killing_spree";
     
+}
+
+// ----------------------------------------------------------------------------------
+//	RankHudInit
+//
+// 		Sets up the rank hud icon
+// ----------------------------------------------------------------------------------
+EXP_RankHudInit()
+{
+	if(!level.exp_drawrankicon)
+    {
+        return;
+    }
+		
+	self endon("death");
+	self notify("rank RankHudInit");
+	
+	wait level.frametime;
+	self endon("rank RankHudInit");
+	
+    self thread EXP_RankHudSetShader();
+	self thread EXP_RankHudMonitor();
+	self thread EXP_RankHudDestroy();
+}		
+
+// ----------------------------------------------------------------------------------
+//	RankHudSetShader
+//
+// 		Sets up the rank hud icon to the appropriate shader for the rank
+// ----------------------------------------------------------------------------------
+EXP_RankHudSetShader(rank_change)
+{
+	self endon("death");
+	self endon("rank RankHudInit");
+
+    options = [];
+    options["alignX"] = "center";
+    options["alignY"] = "middle";
+    options["x"] = 119;
+    options["y"] = 405;
+    options["alpha"] = 0.7;
+	
+	if ( isDefined(rank_change) && rank_change )
+	{
+        options["width"] = 78;
+        options["height"] = 96;
+		self maps\mp\uox\_uox_hud::updateClientHUDElement("rank_hud_icon", "shader", EXP_GetRankStatusIcon(self), options);
+		options["width"] = 26;
+        options["height"] = 32;
+    	self maps\mp\uox\_uox_hud::animateClientHUDElement("rank_hud_icon", "scaleShader", options, 3);	
+	}
+	else
+	{
+		options["width"] = 26;
+        options["height"] = 32;
+    	self maps\mp\uox\_uox_hud::updateClientHUDElement("rank_hud_icon", "shader", EXP_GetRankStatusIcon(self), options);	
+	}
+}
+
+// ----------------------------------------------------------------------------------
+//	RankHudDestroy
+//
+// 		Sets up the rank hud icon to the appropriate shader for the rank
+// ----------------------------------------------------------------------------------
+EXP_RankHudDestroy()
+{
+	self thread EXP_RankHudDestroy2();
+	self endon("rank RankHudInit");
+	self waittill("death");
+	
+	self maps\mp\uox\_uox_hud::deleteClientHUDElement("rank_hud_icon");
+}
+
+// ----------------------------------------------------------------------------------
+//	RankHudDestroy
+//
+// 		Sets up the rank hud icon to the appropriate shader for the rank
+// ----------------------------------------------------------------------------------
+EXP_RankHudDestroy2()
+{
+	self endon("death");
+	self endon("rank RankHudInit");
+
+	while ( level.exp_drawrankicon )
+	 	wait level.frametime;
+	
+	self maps\mp\uox\_uox_hud::deleteClientHUDElement("rank_hud_icon");
+}
+
+// ----------------------------------------------------------------------------------
+//	RankHudSetShader
+//
+// 		Sets up the rank hud icon to the appropriate shader for the rank
+// ----------------------------------------------------------------------------------
+EXP_RankHudMonitor()
+{
+	self endon("death");
+	self endon("rank RankHudInit");
+	
+	while ( level.exp_drawrankicon )
+	{
+		self waittill("level changed", direction);
+		if ( direction )
+        {
+            if(!(self.pers["level"] % [[level.getVars]]("exp_levelsperrank")) && isDefined(EXP_GetRankStatusIcon(self)))
+            {
+                maps\mp\gametypes\_rank_gmi::PlayPromotionSound(self);
+                iprintln(self.name + " ^7has been promoted to " + EXP_GetRankName(self) + ".");		
+            }
+        }
+        // or demoted?
+        else
+        {
+            maps\mp\gametypes\_rank_gmi::PlayDemotionSound(self);
+            iprintln(self.name + " ^7was demoted to " + EXP_GetRankName(self) + ".");			
+        }
+		self thread EXP_RankHudSetShader(true);
+		wait level.frametime;
+	}
+	
+	self maps\mp\uox\_uox_hud::deleteClientHUDElement("rank_hud_icon");
+}
+
+// ----------------------------------------------------------------------------------
+//	GetRankStatusIcon
+//
+//		Returns the appropriate status rank icon
+// ----------------------------------------------------------------------------------
+EXP_GetRankStatusIcon(player)
+{	
+	if ( player.pers["team"] == "spectator" )
+		return "";
+
+    rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank"));
+		
+	icon_name = "br_hudicons_allies_" + rank;
+	
+	return game[icon_name];
+}
+
+// ----------------------------------------------------------------------------------
+//	GetRankName
+//
+//		Returns the appropriate rank name
+// ----------------------------------------------------------------------------------
+EXP_GetRankName(player)
+{	
+
+    rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank"));
+		
+	switch(rank)
+    {
+        case 0:
+            return "Private";
+        case 1:
+            return "Private First Class";
+        case 2:
+            return "Corporal";
+        case 3:
+            return "Seargant";
+        case 4:
+            return "Staff Seargant";
+    }
+    return "DSR";
 }
 
 // Returns the total XP needed to be at least level lvl.

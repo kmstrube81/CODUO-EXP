@@ -781,8 +781,13 @@ artillery_available_hud_destroy2()
 // ----------------------------------------------------------------------------------
 RankHudInit()
 {
-	if ( !getcvarint("scr_battlerank") )
+	if ( !getcvarint("scr_battlerank") && !level.exp_drawrankicon)
 		return;
+    else if(level.exp_drawrankicon)
+    {
+        self thread exp\_exp::EXP_RankHudInit();
+        return;
+    }
 		
 	self endon("death");
 	self notify("rank RankHudInit");
