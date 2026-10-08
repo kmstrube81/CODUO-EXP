@@ -411,13 +411,16 @@ EXP_HudSlam(text)
 
 EXP_updateEXP(xp)
 {
-    self.pers["exp"] += xp;
+    self.pers["exp"] += (xp * level.exp_multiplier);
 
     lvl = getLevel(self.pers["exp"]);
 
     if(lvl != self.pers["level"])
     {
-        maps\mp\uox\_uox_debug::debugLog("debug", self.name + " promoted from level " + self.pers["level"] + " to level " + lvl); 
+        maps\mp\uox\_uox_debug::debugLog("debug", self.name + " promoted from level " + self.pers["level"] + " to level " + lvl);
+
+        self notify("level updated", lvl > self.pers["level"]);
+
         self.pers["level"] = lvl;
     }
 }
@@ -571,9 +574,9 @@ createEXPHUD()
     textOptions["sort"] = 2; //draw ontop of bar
 
     lvlOptions = [];
-    lvlOptions["alignX"] = "center";
+    lvlOptions["alignX"] = "right";
     lvlOptions["alignY"] = "middle";
-    lvlOptions["x"] = 510;
+    lvlOptions["x"] = 518;
     lvlOptions["y"] = 473;
     lvlOptions["fontscale"] = 0.6;
     //textOptions["color"] = (.5,.5,.5);
@@ -625,7 +628,6 @@ createEXPHUD()
 			"number", xp, textOptions);
         self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_lvl",
             "number", self.pers["level"], lvlOptions);
-        self notify("level updated", denom.lvl < self.pers["level"]);
 		denom.lvl = self.pers["level"];
         denom.exp = xp;
         overflow = true;
@@ -817,7 +819,7 @@ EXP_RankHudMonitor()
 	
 	while ( level.exp_drawrankicon )
 	{
-		self waittill("level changed", direction);
+		self waittill("level updated", direction);
 		if ( direction )
         {
             if(!(self.pers["level"] % [[level.getVars]]("exp_levelsperrank")) && isDefined(EXP_GetRankStatusIcon(self)))
@@ -871,13 +873,13 @@ EXP_GetRankName(player)
         case 0:
             return "Private";
         case 1:
-            return "Private First Class";
-        case 2:
             return "Corporal";
-        case 3:
+        case 2:
             return "Seargant";
+        case 3:
+            return "Lieutenant";
         case 4:
-            return "Staff Seargant";
+            return "Commander";
     }
     return "DSR";
 }
