@@ -7,6 +7,8 @@ EXP_Init()
 
     //run exp before regular start game callback
     level.StartGametype_Callbacks = maps\mp\uox\_uox_arrays::arrayUnshift(level.StartGametype_Callbacks, ::EXP_StartGameType);
+    //define menus after regular start game callback
+    level.StartGametype_Callbacks = maps\mp\uox\_uox_arrays::arrayPush(level.StartGametype_Callbacks, ::EXP_DefineMenus);
     //run exp routines before regular player damage callback
     level.PlayerDamage_Callbacks = maps\mp\uox\_uox_arrays::arrayUnshift(level.PlayerDamage_Callbacks, ::EXP_PlayerDamage);
     //run exp routines before regular player killed callback
@@ -111,9 +113,9 @@ EXP_DefineMenus()
     }
     else
     {
-        handlers = maps\mp\uox\_uox_arrays::arrayPush(handlers, ::EXP_handleWeaponMenu);
+        handlers = maps\mp\uox\_uox_arrays::arrayUnshift(handlers, ::EXP_handleWeaponMenu);
     }
-    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayPush(game["menuHandlers"], handlers, game["menu_weapon_all"]);
+    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayUnshift(game["menuHandlers"], handlers, game["menu_weapon_all"]);
     //handle weapons - allies
     handlers = maps\mp\uox\_uox_arrays::getValue(game["menuHandlers"], game["menu_weapon_allies"]);
     if(!isDefined(handlers))
@@ -123,9 +125,9 @@ EXP_DefineMenus()
     }
     else
     {
-        handlers = maps\mp\uox\_uox_arrays::arrayPush(handlers, ::EXP_handleWeaponMenu);
+        handlers = maps\mp\uox\_uox_arrays::arrayUnshift(handlers, ::EXP_handleWeaponMenu);
     }
-    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayPush(game["menuHandlers"], handlers, game["menu_weapon_allies"]);
+    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayUnshift(game["menuHandlers"], handlers, game["menu_weapon_allies"]);
     //hande weapons - axis
     handlers = maps\mp\uox\_uox_arrays::getValue(game["menuHandlers"], game["menu_weapon_axis"]);
     if(!isDefined(handlers))
@@ -135,9 +137,9 @@ EXP_DefineMenus()
     }
     else
     {
-        handlers = maps\mp\uox\_uox_arrays::arrayPush(handlers, ::EXP_handleWeaponMenu);
+        handlers = maps\mp\uox\_uox_arrays::arrayUnshift(handlers, ::EXP_handleWeaponMenu);
     }
-    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayPush(game["menuHandlers"], handlers, game["menu_weapon_axis"]);
+    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayUnshift(game["menuHandlers"], handlers, game["menu_weapon_axis"]);
 
 }
 
@@ -145,7 +147,6 @@ EXP_StartGameType()
 {
     EXP_Vars();
     EXP_Precache();
-    EXP_DefineMenus();
 }
 
 EXP_handleWeaponMenu(response, weapon)
