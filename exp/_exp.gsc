@@ -325,7 +325,7 @@ EXP_HudPop(value)
         
     self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_pop", "popText", options, 1.5);
     if(isDefined(sign))
-        self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_pop+", "popText", _options, 1.5);
+        self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_pop+", "popText", _options, 1);
  
     wait 1.5;
     element fadeOverTime(0.5);
@@ -358,7 +358,7 @@ EXP_HudSlam(text)
         
     maps\mp\uox\_uox_debug::debugLog("debug", self.name + " create notification slam"); 
     
-    self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_notification", "slamText", options, 1.5);
+    self thread maps\mp\uox\_uox_hud::animateClientHUDElement("exp_notification", "slamText", options, 1);
     wait 1.5;
     element fadeOverTime(0.5);
     wait 0.5;
