@@ -22,6 +22,8 @@ EXP_Vars()
     level.exp_multiplier = maps\mp\uox\_uox_vars::varDef("exp", "multiplier", "float", true, 1, 0, 10, "XP Multiplier");
     level.exp_killvalue = maps\mp\uox\_uox_vars::varDef("exp", "killvalue", "int", true, 10, 0, 100, "Kill Base XP Value", ::updateKillValue);
     level.exp_assistvalue = maps\mp\uox\_uox_vars::varDef("exp", "assistvalue", "int", true, 4, 0, 100, "Kill Base Assist Value", ::updateAssistValue);
+    maps\mp\uox\_uox_vars::varDef("exp", "drawexpbar", "bool", true, true, "", "", "Draw XP Bar");
+    maps\mp\uox\_uox_vars::varDef("exp", "drawrankicon", "bool", true, true, "", "", "Draw Rank Icon");
     level.exp_loadtype = maps\mp\uox\_uox_vars::varDef("exp","loadtype", "int", false, 0, 0, 4);
 }
 
@@ -29,16 +31,20 @@ EXP_Precache()
 {
     game["plusText"] = &"+";
     precacheString(game["plusText"]);
+    game["lvlText"] = &"lvl";
+    precacheString(game["lvlText"]);
     game["exp_doubleKillText"] = &"Double Kill";
     game["exp_tripleKillText"] = &"Triple Kill";
     game["exp_multiKillText"] = &"Multi Kill";
     game["exp_fiveKillText"] = &"Bloodthirsty";
     game["exp_tenKillText"] = &"Killing Spree";
+    game["exp_headshotText"] = &"Headshot";
     precacheString(game["exp_doubleKillText"]);
     precacheString(game["exp_tripleKillText"]);
     precacheString(game["exp_multiKillText"]);
     precacheString(game["exp_fiveKillText"]);
     precacheString(game["exp_tenKillText"]);
+    precacheString(game["exp_headshotText"]);
     switch(level.objective)
     {
         case "ctf":
@@ -204,6 +210,11 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     thread maps\mp\uox\_uox_arrays::arrayReadEach(self.assistDamage, ::EXP_PopAssists);
     //delete the array
     self.assistDamage = undefined;
+
+    if(sMeansOfDeath == "MOD_HEAD_SHOT")
+    {
+        attacker.notification = "headshot";
+    }
     
     //record kill for killstreak tracking
     if(!isDefined(attacker.pers["killstreak"]))
@@ -381,7 +392,7 @@ EXP_updateEXP(xp)
 
 updateEXPHUD()
 {
-    if(isAlive(self) && self.pers["team"] != "spectator" && self.sessionstate == "playing")
+    if(isAlive(self) && self.pers["team"] != "spectator" && self.sessionstate == "playing" && [[level.getVars]]("exp_drawexpbar"))
         self createEXPHUD();
     else 
         self deleteEXPHUD();
@@ -391,6 +402,10 @@ updateEXPHUD()
     {
         switch(self.notification)
         {
+            case "headshot":
+                self EXP_updateEXP(level.exp_assistvalue);
+                text = game["exp_headshotText"];
+                break;
             case "double_kill":
                 self EXP_updateEXP(level.exp_assistvalue);
                 text = game["exp_doubleKillText"];
@@ -523,6 +538,20 @@ createEXPHUD()
     //textOptions["color"] = (.5,.5,.5);
     textOptions["sort"] = 2; //draw ontop of bar
 
+    lvlOptions = [];
+    lvlOptions["alignX"] = "center";
+    lvlOptions["alignY"] = "middle";
+    lvlOptions["x"] = 510;
+    lvlOptions["y"] = 473;
+    lvlOptions["fontscale"] = 0.6;
+    //textOptions["color"] = (.5,.5,.5);
+    lvlOptions["sort"] = 2; //draw ontop of bar
+    lvlOptions["label"] = game["lvlText"];
+
+    if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_lvl")))
+        self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_lvl",
+		"number", self.pers["level"], lvlOptions);
+
     if(!isDefined(self maps\mp\uox\_uox_hud::getClientHUDElement("exp_bardiv")))
 	self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardiv",
 		"text", game["dividerText"], textOptions);
@@ -562,6 +591,8 @@ createEXPHUD()
         xp = getLevelExperience( ( self.pers["level"] + 1 ) );
 		denom = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_bardenom",
 			"number", xp, textOptions);
+        self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_lvl",
+            "number", self.pers["level"], lvlOptions);
 		denom.lvl = self.pers["level"];
         denom.exp = xp;
         overflow = true;
