@@ -756,7 +756,7 @@ EXP_RankHudSetShader(rank_change, direction )
     if(!isDefined(rank_change))
         rank_change = false;
     if(!isDefined(direction))
-        rank_change = true;
+        direction = true;
 
     options = [];
     options["alignX"] = "center";
