@@ -56,7 +56,7 @@ EXP_checkWeaponLevel(lvl, weapon)
     switch(weapon)
     {
         case "m1carbine_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_m1carbine", "0");
@@ -69,7 +69,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
             
         case "m1garand_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_m1garand", "0");
@@ -82,7 +82,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
             
         case "thompson_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_thompson", "0");
@@ -95,7 +95,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
             
         case "bar_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_bar", "0");
@@ -108,7 +108,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
             
         case "springfield_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_springfield", "0");
@@ -121,7 +121,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "mg30cal_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_mg30cal", "0");
@@ -134,7 +134,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "enfield_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_enfield", "0");
@@ -147,7 +147,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "sten_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_sten", "0");
@@ -160,7 +160,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "bren_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_bren", "0");
@@ -173,7 +173,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "mosin_nagant_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_nagant", "0");
@@ -186,7 +186,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "svt40_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_svt40", "0");
@@ -199,7 +199,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "ppsh_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_ppsh", "0");
@@ -212,7 +212,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "mosin_nagant_sniper_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_nagantsniper", "0");
@@ -225,7 +225,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "dp28_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_dp28", "0");
@@ -238,7 +238,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "kar98k_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_kar98k", "0");
@@ -251,7 +251,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "gewehr43_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_gewehr43", "0");
@@ -264,7 +264,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "mp40_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_mp40", "0");
@@ -277,7 +277,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "mp44_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_mp44", "0");
@@ -290,7 +290,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "kar98k_sniper_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_kar98ksniper", "0");
@@ -303,7 +303,7 @@ EXP_checkWeaponLevel(lvl, weapon)
             break;
 
         case "mg34_mp":
-            if(self.pers["level"] < lvl))
+            if(self.pers["level"] < lvl)
             {
                 //turn off weapon
                 setcvar("ui_allow_mg34", "0");
