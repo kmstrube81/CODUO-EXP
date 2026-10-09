@@ -7,6 +7,7 @@ EXP_restrict(weapon)
     wepon = maps\mp\uox\_uox_arrays::getValue(level.weaponUnlocks, weapon);
     if(!isDefined(wepon))
     {
+        maps\mp\uox\_uox_debug::debugLog("info", self.name + " EXP restrict " + weapon + " not found");
         return "restricted";
     }
 
