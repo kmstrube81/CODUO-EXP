@@ -493,6 +493,7 @@ EXP_updateEXP(xp)
 
         self.pers["level"] = lvl;
 
+        self EXP_RankHudSetStatusIcon();
         self exp\_exp_weapons::EXP_checkLevelUnlocks();
     }
 }
