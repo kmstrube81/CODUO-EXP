@@ -835,7 +835,7 @@ EXP_RankHudSetHeadIcon()
 {
     self endon("rank RankHudInit");
 
-    if(drawfriend)
+    if(!level.drawfriend)
 	{
 		if(![[level.getVars]]("scr_battlerank"))
 		{
