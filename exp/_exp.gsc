@@ -278,7 +278,9 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
 	//reset killstreak at this point
     self.pers["killstreak"] = undefined;
     //check for ace
-    if(!isDefined(level.exp_acesituation))
+    if(!isDefined(level.exp_acesituation)
+        && (level.uox_teamplay && level.exist[self.pers["team"]] > 2) //must be at least 3 players on other team
+            && (!level.uox_teamplay && level.exist["2players"] > 3) //must be at least 3 other players in non teamplay games
     {
         level.exp_acesituation = true;
         level.exp_aceplayer = attacker;
