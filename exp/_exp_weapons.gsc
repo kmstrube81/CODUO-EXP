@@ -10,7 +10,7 @@ EXP_restrict(weapon)
         maps\mp\uox\_uox_debug::debugLog("info", self.name + " EXP restrict " + weapon + " not found");
         return "restricted";
     }
-    maps\mp\uox\_uox_debug::debugLog("info", self.name + " lvl " + self.pers["level"] + "EXP restrict " + weapon + " unlock level is " + wepon);
+    maps\mp\uox\_uox_debug::debugLog("info", self.name + " lvl " + self.pers["level"] + " EXP restrict " + weapon + " unlock level is " + wepon);
     if(self.pers["level"] >= wepon)
     {
         return weapon;

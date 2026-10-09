@@ -160,6 +160,8 @@ EXP_handleWeaponMenu(response, weapon)
     if(!isDefined(weapon) || weapon != "restricted") 
         weapon = self exp\_exp_weapons::EXP_restrict(response);
 
+    maps\mp\uox\_uox_debug::debugLog("info", self.name + " restrict weapon result is " + weapon);
+
     return weapon;
 }
 
