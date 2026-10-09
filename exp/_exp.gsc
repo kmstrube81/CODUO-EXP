@@ -98,6 +98,8 @@ EXP_Precache()
 
 EXP_DefineMenus()
 {
+    if(isDefined(game["gamestarted"]))
+        return;
     //define custom menus here
 
     //set up menu handlers
@@ -152,6 +154,25 @@ EXP_StartGameType()
 EXP_handleWeaponMenu(response, weapon)
 {
     if(response == "open" || response == "close")
+        return;
+
+    if(response == "team")
+    {
+        self openMenu(game["menu_team"]);
+        return;
+    }
+    else if(response == "viewmap")
+    {
+        self openMenu(game["menu_viewmap"]);
+        return;
+    }
+    else if(response == "callvote")
+    {
+        self openMenu(game["menu_callvote"]);
+        return;
+    }
+
+    if(!isDefined(self.pers["team"]) || (self.pers["team"] != "allies" && self.pers["team"] != "axis"))
         return;
 
     if(isDefined(weapon))
