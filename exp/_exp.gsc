@@ -30,9 +30,10 @@ EXP_Vars()
     maps\mp\uox\_uox_vars::varDef("exp", "drawexpbar", "bool", true, true, "", "", "Draw XP Bar");
     maps\mp\uox\_uox_vars::varDef("exp", "levelsperrank", "int", false, 4, 1, 100, "Levels Per Rank");
     level.exp_drawrankicon = maps\mp\uox\_uox_vars::varDef("exp", "drawrankicon", "bool", true, true, "", "", "Draw Rank Icon", ::updateDrawRank);
+    level.exp_drawpopups = maps\mp\uox\_uox_vars::varDef("exp", "drawpopups", "bool", true, true, "", "", "Draw Pop Ups", ::updateDrawPopups);
     level.exp_loadtype = maps\mp\uox\_uox_vars::varDef("exp","loadtype", "int", false, 0, 0, 4);
 
-    maps\mp\uox\_uox_vars::varDef("exp", "levelunlock_all", "bool", false, true, "", "");
+    level.exp_unlockall = maps\mp\uox\_uox_vars::varDef("exp", "levelunlock_all", "bool", false, true, "", "");
 }
 
 EXP_Precache()
@@ -402,7 +403,7 @@ EXP_PostRound()
     level waittill("round_ended");
 
     //check ace situation
-    if(isDefined(level.exp_acesituation) && level.exp_acesituation)
+    if(isDefined(level.exp_acesituation) && level.exp_acesituation && (level.roundwinner == level.exp_aceplayer.pers["team"] || level.roundwinner == "deathmatch"))
     {
         level.exp_aceplayer.notification = "round_ace";
 
@@ -417,11 +418,11 @@ EXP_PostRound()
     {
         if(isDefined(level.exp_clutchplayer) && level.roundwinner == level.exp_clutchplayer.pers["team"])
         {
-            level.exp_aceplayer EXP_updateEXP(level.exp_killvalue);
-            level.exp_aceplayer thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
+            level.exp_clutchplayer EXP_updateEXP(level.exp_killvalue);
+            level.exp_clutchplayer thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
             text = game["exp_clutchText"];
-            level.exp_aceplayer thread EXP_HudSlam(text); //TODO implement significant notification menu
-            level.exp_aceplayer.notification = undefined;
+            level.exp_clutchplayer thread EXP_HudSlam(text); //TODO implement significant notification menu
+            level.exp_clutchplayer.notification = undefined;
         }
     }
 }
@@ -434,6 +435,11 @@ updateKillValue(xp)
 updateAssistValue(xp)
 {
     level.exp_assistvalue = xp;
+}
+
+updateDrawPopups(draw)
+{
+    level.exp_drawpopups = draw;
 }
 
 updateDrawRank(drawrank)
@@ -500,6 +506,8 @@ EXP_PopAssists(damage, attackerNum)
 
 EXP_HudPop(value)
 {
+    if(!level.exp_drawpopups)
+        return;
     self notify("exp_pop");
     self endon("exp_pop");
     self endon("hud_clear");
@@ -559,6 +567,8 @@ EXP_HudPop(value)
 
 EXP_HudSlam(text)
 {
+    if(!level.exp_drawpopups)
+        return;
     self notify("exp_slam");
     self endon("exp_slam");
     self endon("hud_clear");
