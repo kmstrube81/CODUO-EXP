@@ -1020,7 +1020,7 @@ EXP_GetRankHeadIcon(player)
 EXP_GetRankName(player)
 {	
 
-    rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank") - 1);
+    rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank"));
 		
 	switch(rank)
     {
