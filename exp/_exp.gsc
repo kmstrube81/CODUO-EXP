@@ -98,16 +98,24 @@ EXP_Precache()
 
 EXP_DefineMenus()
 {
-    if(isDefined(game["gamestarted"]))
-        return;
-    //define custom menus here
+   
+    if(!isDefined(game["gamestarted"]))
+    {
+        //define custom menus here
+        placeholder = 0;
+    }
+    EXP_SetupMenuHandlers();
 
+}
+
+EXP_SetupMenuHandlers()
+{
     //set up menu handlers
-    if(!isDefined(game["menuHandlers"]))
-        game["menuHandlers"] = maps\mp\uox\_uox_arrays::superArray();
+    if(!isDefined(level.menuHandlers))
+        level.menuHandlers = maps\mp\uox\_uox_arrays::superArray();
     //override weapon select handling
     //handle weapons - all
-    handlers = maps\mp\uox\_uox_arrays::getValue(game["menuHandlers"], game["menu_weapon_all"]);
+    handlers = maps\mp\uox\_uox_arrays::getValue(level.menuHandlers, game["menu_weapon_all"]);
     if(!isDefined(handlers))
     {
         handlers = [];
@@ -117,9 +125,9 @@ EXP_DefineMenus()
     {
         handlers = maps\mp\uox\_uox_arrays::arrayUnshift(handlers, ::EXP_handleWeaponMenu);
     }
-    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayUnshift(game["menuHandlers"], handlers, game["menu_weapon_all"]);
+    level.menuHandlers = maps\mp\uox\_uox_arrays::arrayUnshift(level.menuHandlers, handlers, game["menu_weapon_all"]);
     //handle weapons - allies
-    handlers = maps\mp\uox\_uox_arrays::getValue(game["menuHandlers"], game["menu_weapon_allies"]);
+    handlers = maps\mp\uox\_uox_arrays::getValue(level.menuHandlers, game["menu_weapon_allies"]);
     if(!isDefined(handlers))
     {
         handlers = [];
@@ -129,9 +137,9 @@ EXP_DefineMenus()
     {
         handlers = maps\mp\uox\_uox_arrays::arrayUnshift(handlers, ::EXP_handleWeaponMenu);
     }
-    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayUnshift(game["menuHandlers"], handlers, game["menu_weapon_allies"]);
+    level.menuHandlers = maps\mp\uox\_uox_arrays::arrayUnshift(level.menuHandlers, handlers, game["menu_weapon_allies"]);
     //hande weapons - axis
-    handlers = maps\mp\uox\_uox_arrays::getValue(game["menuHandlers"], game["menu_weapon_axis"]);
+    handlers = maps\mp\uox\_uox_arrays::getValue(level.menuHandlers, game["menu_weapon_axis"]);
     if(!isDefined(handlers))
     {
         handlers = [];
@@ -141,8 +149,7 @@ EXP_DefineMenus()
     {
         handlers = maps\mp\uox\_uox_arrays::arrayUnshift(handlers, ::EXP_handleWeaponMenu);
     }
-    game["menuHandlers"] = maps\mp\uox\_uox_arrays::arrayUnshift(game["menuHandlers"], handlers, game["menu_weapon_axis"]);
-
+    level.menuHandlers = maps\mp\uox\_uox_arrays::arrayUnshift(level.menuHandlers, handlers, game["menu_weapon_axis"]);
 }
 
 EXP_StartGameType()
@@ -157,20 +164,11 @@ EXP_handleWeaponMenu(response, weapon)
         return;
 
     if(response == "team")
-    {
-        self openMenu(game["menu_team"]);
         return;
-    }
     else if(response == "viewmap")
-    {
-        self openMenu(game["menu_viewmap"]);
         return;
-    }
     else if(response == "callvote")
-    {
-        self openMenu(game["menu_callvote"]);
         return;
-    }
 
     if(!isDefined(self.pers["team"]) || (self.pers["team"] != "allies" && self.pers["team"] != "axis"))
         return;
