@@ -47,12 +47,16 @@ EXP_Precache()
     game["exp_fiveKillText"] = &"Bloodthirsty";
     game["exp_tenKillText"] = &"Killing Spree";
     game["exp_headshotText"] = &"Headshot";
+    game["exp_aceText"] = &"Ace!";
+    game["exp_clutchText"] = &"Clutch!";
     precacheString(game["exp_doubleKillText"]);
     precacheString(game["exp_tripleKillText"]);
     precacheString(game["exp_multiKillText"]);
     precacheString(game["exp_fiveKillText"]);
     precacheString(game["exp_tenKillText"]);
     precacheString(game["exp_headshotText"]);
+    precacheString(game["exp_aceText"]);
+    precacheString(game["exp_clutchText"]);
     switch(level.objective)
     {
         case "ctf":
@@ -99,10 +103,10 @@ EXP_Precache()
 EXP_DefineMenus()
 {
    
-    if(!isDefined(game["gamestarted"]))
+    if(!isDefined(game["exp_gamestarted"]))
     {
         //define custom menus here
-        placeholder = 0;
+        game["exp_gamestarted"] = true;
     }
     EXP_SetupMenuHandlers();
 
@@ -155,7 +159,10 @@ EXP_SetupMenuHandlers()
 EXP_StartGameType()
 {
     EXP_Vars();
-    EXP_Precache();
+    if(!isDefined(game["gamestarted"]))
+        EXP_Precache();
+
+    thread EXP_PostRound();
 }
 
 EXP_handleWeaponMenu(response, weapon)
@@ -269,7 +276,53 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
 		
 	//reset killstreak at this point
     self.pers["killstreak"] = undefined;
-		
+    //check for ace
+    if(!isDefined(level.exp_acesituation))
+    {
+        level.exp_acesituation = true;
+        level.exp_aceplayer = attacker;
+    }
+    else if(level.exp_acesituation)
+    {
+        if(attacker != level.exp_aceplayer)
+            level.exp_acesituation = false;
+    }
+	//check for clutch - must be team game
+    if(level.uox_teamplay)
+    {
+        if(!isDefined(level.exp_clutchsituation))
+        {
+            //if there are 2 players left on victim (self)'s team then there will be only 1 left when he is finished dying
+            clutchteam = self.pers["team"];
+            //
+            if(clutchteam == "allies")
+            {   //if there are at least 3 other people on the other team, its a clutch situation
+                if(level.exist["allies"] == 2 && level.exist["axis"] <= 3 )
+                {
+                    level.exp_clutchsituation = true;
+                }
+            }
+            else if(clutchteam == "axis")
+            {   //if there are at least 3 other people on the other team, its a clutch situation
+                if(level.exist["axis"] == 2 && level.exist["allies"] <= 3 )
+                {
+                    level.exp_clutchsituation = true;
+                }
+            } //find the clutch player
+            players = getentarray("player", "classname");
+            for(i = 0; i < players.size; i++)
+            {
+                player = players[i];
+                if(isDefined(player.pers["team"]) && player.pers["team"] != "spectator" && (!level.roundstarted || !isDefined(player.lives) || player.lives > -1 || (player.lives < 0 && [[level.getVars]]("scr_reinforcements") == -1)))
+                {
+                    if(player.pers["team"] == clutchteam && player != self)
+                        level.exp_clutchplayer = player;
+                }
+            }
+        } else if(isDefined(level.exp_clutchplayer) && level.exp_clutchplayer == self)
+            level.exp_clutchsituation = false;
+    }
+
     if(isPlayer(attacker) && (attacker == self))
     	    return;
     	    
@@ -294,7 +347,7 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     
     attacker EXP_updateEXP(killxp); //give kill xp
     //pop the xp text on the killing player 
-    attacker thread EXP_HudPop(killxp);
+    attacker thread EXP_HudPop(killxp * level.exp_multiplier);
 
     //pop the assist text on the assisting players
     thread maps\mp\uox\_uox_arrays::arrayReadEach(self.assistDamage, ::EXP_PopAssists);
@@ -342,6 +395,35 @@ EXP_LoadPlayerLevel()
     self exp\_query::load("exp", "Experience");
     self.pers["level"] = getLevel(self.pers["exp"]);
     self exp\_exp_weapons::EXP_checkLevelUnlocks();
+}
+
+EXP_PostRound()
+{
+    level waittill("round_ended");
+
+    //check ace situation
+    if(isDefined(level.exp_acesituation) && level.exp_acesituation)
+    {
+        level.exp_aceplayer.notification = "round_ace";
+
+        level.exp_aceplayer EXP_updateEXP(level.exp_killvalue);
+        level.exp_aceplayer thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
+        text = game["exp_aceText"];
+        level.exp_aceplayer thread EXP_HudSlam(text); //TODO implement significant notification menu
+        level.exp_aceplayer.notification = undefined;
+    }
+    //check clutch situation
+    if(isDefined(level.exp_clutchsituation) && level.exp_clutchsituation)
+    {
+        if(isDefined(level.exp_clutchplayer) && level.roundwinner == level.exp_clutchplayer.pers["team"])
+        {
+            level.exp_aceplayer EXP_updateEXP(level.exp_killvalue);
+            level.exp_aceplayer thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
+            text = game["exp_clutchText"];
+            level.exp_aceplayer thread EXP_HudSlam(text); //TODO implement significant notification menu
+            level.exp_aceplayer.notification = undefined;
+        }
+    }
 }
 
 updateKillValue(xp)
@@ -411,7 +493,7 @@ EXP_PopAssists(damage, attackerNum)
     if(damage["damage"] < 50) //return if damage wasn't more than 50
         return;
         
-	damage["attacker"] EXP_updateEXP(assistxp); //give assist xp 
+	damage["attacker"] EXP_updateEXP(assistxp * level.exp_multiplier); //give assist xp 
         
     damage["attacker"] thread EXP_HudPop(assistxp);   
 }
@@ -557,72 +639,72 @@ updateEXPHUD()
                 break; 
             case "bomb_plant":
                 self EXP_updateEXP(level.exp_killvalue);
-                self thread EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["bombPlantedText"];
                 break;
             case "bomb_defuse":
                 self EXP_updateEXP(level.exp_killvalue);
-                self thread EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["bombDefusedText"];
                 break;
             case "flag_take":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self thread EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_takeFlagText"];
                 break;
             case "flag_returned":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self thread EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_returnFlagText"];
                 break;
             case "flag_captured":
                 self EXP_updateEXP(level.exp_killvalue);
-                self thread EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["exp_captureFlagText"];
                 break;
             case "flag_defense":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self thread EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_defendFlagText"];
                 break;
             case "flag_assist":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self thread EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_assistFlagText"];
                 break;
             case "bel_survived":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self thread EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_survivedText"];
                 break;
             case "bel_kill_allied":
                 self EXP_updateEXP(level.exp_killvalue);
-                self thread EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["exp_killAlliedText"];
                 break;
             case "re_pickup":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self thread EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_pickupText"];
                 break;
             case "re_captured":
                 self EXP_updateEXP(level.exp_killvalue);
-                self thread EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["exp_captureText"];
                 break;
             case "radio_captured":
                 self EXP_updateEXP(level.exp_killvalue);
-                self thread EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["exp_captureRadioText"];
                 break;
             case "radio_destroyed":
                 self EXP_updateEXP(level.exp_killvalue);
-                self thread EXP_HudPop(level.exp_killvalue);
+                self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["exp_destroyRadioText"];
                 break;
             case "radio_hold":
                 self EXP_updateEXP(level.exp_assistvalue);
-                self thread EXP_HudPop(level.exp_assistvalue);
+                self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_holdRadioText"];
                 break;
         }
