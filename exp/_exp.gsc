@@ -814,10 +814,43 @@ EXP_RankHudInit()
 	self endon("rank RankHudInit");
 	
     self thread EXP_RankHudSetShader();
+    self thread EXP_RankHudSetStatusIcon();
+    self thread EXP_RankHudSetHeadIcon();
 	self thread EXP_RankHudMonitor();
 	self thread EXP_RankHudDestroy();
 }		
 
+EXP_RankHudSetStatusIcon()
+{
+    self endon("rank RankHudInit");
+
+    if(![[level.getVars]]("scr_battlerank"))
+    {
+        self.statusicon = EXP_GetRankStatusIcon(self);
+    }
+
+}
+
+EXP_RankHudSetHeadIcon()
+{
+    self endon("rank RankHudInit");
+
+    if(drawfriend)
+	{
+		if(![[level.getVars]]("scr_battlerank"))
+		{
+            self.headicon = EXP_GetRankHeadIcon(self);
+            if(self.pers["team"] == "allies")
+			{
+				self.headiconteam = "allies";
+			}
+			else
+			{
+				self.headiconteam = "axis";
+			}
+        }
+    }
+}
 // ----------------------------------------------------------------------------------
 //	RankHudSetShader
 //
@@ -952,6 +985,30 @@ EXP_GetRankStatusIcon(player)
 
     maps\mp\uox\_uox_debug::debugLog("debug", self.name + " setting rank icon to " + icon_name);
 	
+	return game[icon_name];
+}
+
+// ----------------------------------------------------------------------------------
+//	GetRankHeadIcon
+//
+//		Returns the appropriate head rank icon
+// ----------------------------------------------------------------------------------
+EXP_GetRankHeadIcon(player)
+{	
+	if ( player.pers["team"] == "spectator" )
+		return "";
+
+    max_rank = 4;
+
+    rank = (player.pers["level"] / [[level.getVars]]("exp_levelsperrank"));
+
+    if(rank > max_rank)
+        rank = max_rank;
+
+	icon_name = "br_headicons_allies_" + rank;
+
+    maps\mp\uox\_uox_debug::debugLog("debug", self.name + " setting rank icon to " + icon_name);
+
 	return game[icon_name];
 }
 
