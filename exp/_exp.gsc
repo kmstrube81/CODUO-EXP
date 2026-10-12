@@ -32,6 +32,7 @@ EXP_Vars()
     level.exp_drawrankicon = maps\mp\uox\_uox_vars::varDef("exp", "drawrankicon", "bool", true, true, "", "", "Draw Rank Icon", ::updateDrawRank);
     level.exp_drawpopups = maps\mp\uox\_uox_vars::varDef("exp", "drawpopups", "bool", true, true, "", "", "Draw Pop Ups", ::updateDrawPopups);
     level.exp_loadtype = maps\mp\uox\_uox_vars::varDef("exp","loadtype", "int", false, 0, 0, 4);
+    level.exp_announcements = maps\mp\uox\_uox_vars::varDef("exp","announce", "string", true, "", "", "", "Acheivements to Announce", ::updateAnnouncements);
 
     level.exp_unlockall = maps\mp\uox\_uox_vars::varDef("exp", "levelunlock_all", "bool", false, true, "", "");
 }
@@ -413,7 +414,9 @@ EXP_PostRound()
         level.exp_aceplayer EXP_updateEXP(level.exp_killvalue);
         level.exp_aceplayer thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
         text = game["exp_aceText"];
-        level.exp_aceplayer thread EXP_HudSlam(text); //TODO implement significant notification menu
+        level.exp_aceplayer thread EXP_HudSlam(text);
+        level.exp_aceplayer thread EXP_Announce(self.notification, text); //TODO implement significant notification menu
+        logPrint("A;" + level.exp_aceplayer getGUID() + ";" + level.exp_aceplayer getEntityNumber() + ";" + level.exp_aceplayer.pers["team"] + ";" + level.exp_aceplayer.name + ";" + "round_ace" + "\n");
         level.exp_aceplayer.notification = undefined;
     }
     //check clutch situation
@@ -424,7 +427,9 @@ EXP_PostRound()
             level.exp_clutchplayer EXP_updateEXP(level.exp_killvalue);
             level.exp_clutchplayer thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
             text = game["exp_clutchText"];
-            level.exp_clutchplayer thread EXP_HudSlam(text); //TODO implement significant notification menu
+            level.exp_clutchplayer thread EXP_HudSlam(text);
+            level.exp_clutchplayer thread EXP_Announce(self.notification, text); //TODO implement significant notification menu
+            logPrint("A;" + level.exp_clutchplayer getGUID() + ";" + level.exp_clutchplayer getEntityNumber() + ";" + level.exp_clutchplayer.pers["team"] + ";" + level.exp_clutchplayer.name + ";" + "round_clutch" + "\n");
             level.exp_clutchplayer.notification = undefined;
         }
     }
@@ -457,6 +462,11 @@ updateAssistValue(xp)
 updateDrawPopups(draw)
 {
     level.exp_drawpopups = draw;
+}
+
+updateDrawPopups(ann)
+{
+    level.exp_announcements = ann;
 }
 
 updateDrawRank(drawrank)
@@ -735,8 +745,23 @@ updateEXPHUD()
                 text = game["exp_holdRadioText"];
                 break;
         }
-        self thread EXP_HudSlam(text); //TODO implement significant notification menu
+        self thread EXP_HudSlam(text);
+        self thread EXP_Announce(self.notification, text); //TODO implement significant notification menu
         self.notification = undefined;
+    }
+}
+
+EXP_Announce(notif, text)
+{
+    //if the notification is set as signifcant
+    arr = maps\mp\uox\_uox_utils::stringSplit(level.exp_announcements, " ");
+
+    for(i = 0; i < arr.size; i++)
+    {
+        if(arr[i] == notif)
+        {
+            self iprintln(self.name + "^7: " + text);
+        }
     }
 }
 
