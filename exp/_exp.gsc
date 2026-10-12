@@ -412,7 +412,7 @@ EXP_PlayerConnect()
 EXP_PlayerDisconnect()
 {
     //save player level.
-    thread exp\_query::save("exp", player.pers["exp"]);
+    thread exp\_query::save("exp", self.pers["exp"]);
 }
 
 EXP_LoadPlayerLevel()

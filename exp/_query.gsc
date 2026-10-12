@@ -34,7 +34,7 @@ load(prop, propName, timeout)
 	self.pers[prop + " loaded"] = true;
 
 	if(isDefined(self.pers[prop]))
-		self.pers[prop] += self.pers["temp " + prop];
+		self.pers[prop] += (int)self.pers["temp " + prop];
 	else
 		self.pers[prop] = self.pers["temp " + prop];
 }
@@ -92,7 +92,7 @@ loadGSC(prop, player, timeout)
 query(prop, query_text, timeout)
 {
 	//craft a query ID to search for the result.
-	queryID = self getGuid() + randomInt(100000);
+	queryID = "Q" + self getGuid() + randomInt(100000);
 	logPrint( "query;" + queryID + ";" + query_text + "\n" );
 	
 	self thread waitForResult(prop, queryID, timeout);
@@ -169,7 +169,7 @@ save(prop, value, force)
 			self thread exp\_exp_values::saveGSC(prop, self getGuid(), timeout);
 			return;
 		case 3: //3 = log for log parser backend (such as b3 etc)
-			logPrint("SET;" + self getGuid() + ";" + self getEntityNumber() + ";" + self.name + ";" + prop + "\n");
+			logPrint("SET;" + self getGuid() + ";" + self getEntityNumber() + ";" + prop + ";" + value"\n");
 			return;
 		case 4: //4 = don't save from cvar either
 			return;
