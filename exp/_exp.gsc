@@ -44,13 +44,21 @@ EXP_Precache()
     game["lvlText"] = &"lvl";
     precacheString(game["lvlText"]);
     game["exp_doubleKillText"] = &"Double Kill";
+    game["exp_doubleKillAnnounce"] = "got a Double Kill!";
     game["exp_tripleKillText"] = &"Triple Kill";
+    game["exp_tripleKillAnnounce"] = "got a Triple Kill!";
     game["exp_multiKillText"] = &"Multi Kill";
+    game["exp_multiKillAnnounce"] = "got a Multi Kill!";
     game["exp_fiveKillText"] = &"Bloodthirsty";
+    game["exp_fiveKillAnnounce"] = "is on a 5 Kill Streak!";
     game["exp_tenKillText"] = &"Killing Spree";
+    game["exp_tenKillAnnounce"] = "is on a 10 Kill Streak!";
     game["exp_headshotText"] = &"Headshot";
+    game["exp_headshotAnnounce"] = "got a Headshot kill!";
     game["exp_aceText"] = &"Ace!";
+    game["exp_aceAnnounce"] = "aced the round!";
     game["exp_clutchText"] = &"Clutch!";
+    game["exp_clutchAnnounce"] = "clutched the round!";
     precacheString(game["exp_doubleKillText"]);
     precacheString(game["exp_tripleKillText"]);
     precacheString(game["exp_multiKillText"]);
@@ -63,10 +71,15 @@ EXP_Precache()
     {
         case "ctf":
             game["exp_takeFlagText"] = &"Flag Taken";
+	    game["exp_takeFlagAnnounce"] = "took the flag!";
             game["exp_returnFlagText"] = &"Flag Returned";
+	    game["exp_returnFlagAnnounce"] = "returned the flag!";
             game["exp_captureFlagText"] = &"Flag Captured";
+	    game["exp_captureFlagAnnounce"] = "captured the flag!";
             game["exp_defendFlagText"] = &"Flag Defended";
+	    game["exp_defendFlagAnnounce"] = "defended the flag!";
             game["exp_assistFlagText"] = &"Flag Carrier Assisted";
+	    game["exp_assistFlagAnnounce"] = "assisted the flag carrier!";
             precacheString(game["exp_takeFlagText"]);
             precacheString(game["exp_returnFlagText"]);
             precacheString(game["exp_captureFlagText"]);
@@ -75,26 +88,35 @@ EXP_Precache()
             break;
         case "commandpost":
             game["exp_captureFlagText"] = &"Flag Captured";
+	    game["exp_captureFlagAnnounce"] = "captured the flag!";
             game["exp_defendFlagText"] = &"Flag Defended";
+	    game["exp_defendFlagAnnounce"] = "defended the flag!";
             precacheString(game["exp_captureFlagText"]);
             precacheString(game["exp_defendFlagText"]);
             break;
         case "bel":
             game["exp_survivedText"] = &"Survived";
+	    game["exp_survivedAnnounce"] = "survived!";
             game["exp_killAlliedText"]= &"Allied Killed";
+	    game["exp_killAlliedAnnounce"]= "killed an Allied player!";
             precacheString(game["exp_survivedText"]);
             precacheString(game["exp_killAlliedText"]);
             break;
         case "retrieval":
             game["exp_pickupText"] = &"Objective Picked Up";
+	    game["exp_pickupAnnounce"] = "picked up objective!";
             game["exp_captureText"] = &"Objective Captured";
+	    game["exp_captureAnnounce"] = "captured objective!";
             precacheString(game["exp_pickupText"]);
             precacheString(game["exp_captureText"]);
             break;
         case "radio":
             game["exp_captureRadioText"] = &"Radio Captured";
+	    game["exp_captureRadioAnnounce"] = "captured the radio!";
             game["exp_destroyRadioText"] = &"Radio Destroyed";
+	    game["exp_destroyRadioAnnounce"] = "destroyed the radio!";
             game["exp_holdRadioText"] = &"Radio Held";
+	    game["exp_holdRadioAnnounce"] = "held the radio!";
             precacheString(game["exp_captureRadioText"]);
             precacheString(game["exp_destroyRadioText"]);
             precacheString(game["exp_holdRadioText"]);
@@ -280,8 +302,8 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     self.pers["killstreak"] = undefined;
     //check for ace
     if(!isDefined(level.exp_acesituation)
-        && (level.uox_teamplay && level.exist[self.pers["team"]] > 2) //must be at least 3 players on other team
-            && (!level.uox_teamplay && level.exist["2players"] > 3) ) //must be at least 3 other players in non teamplay games
+        && ( (level.uox_teamplay && level.exist[self.pers["team"]] > 2) //must be at least 3 players on other team
+            || (!level.uox_teamplay && level.exist["2players"] > 3) ) ) //must be at least 3 other players in non teamplay games
     {
         level.exp_acesituation = true;
         level.exp_aceplayer = attacker;
@@ -415,7 +437,7 @@ EXP_PostRound()
         level.exp_aceplayer thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
         text = game["exp_aceText"];
         level.exp_aceplayer thread EXP_HudSlam(text);
-        level.exp_aceplayer thread EXP_Announce(self.notification, text); //TODO implement significant notification menu
+        level.exp_aceplayer EXP_Announce(level.exp_aceplayer.notification, text, game["exp_aceAnnounce"]); //TODO implement significant notification menu
         logPrint("A;" + level.exp_aceplayer getGUID() + ";" + level.exp_aceplayer getEntityNumber() + ";" + level.exp_aceplayer.pers["team"] + ";" + level.exp_aceplayer.name + ";" + "round_ace" + "\n");
         level.exp_aceplayer.notification = undefined;
     }
@@ -428,7 +450,7 @@ EXP_PostRound()
             level.exp_clutchplayer thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
             text = game["exp_clutchText"];
             level.exp_clutchplayer thread EXP_HudSlam(text);
-            level.exp_clutchplayer thread EXP_Announce(self.notification, text); //TODO implement significant notification menu
+            level.exp_clutchplayer EXP_Announce(level.exp_clutchplayer, text, game["exp_clutchAnnounce"]); //TODO implement significant notification menu
             logPrint("A;" + level.exp_clutchplayer getGUID() + ";" + level.exp_clutchplayer getEntityNumber() + ";" + level.exp_clutchplayer.pers["team"] + ";" + level.exp_clutchplayer.name + ";" + "round_clutch" + "\n");
             level.exp_clutchplayer.notification = undefined;
         }
@@ -464,7 +486,7 @@ updateDrawPopups(draw)
     level.exp_drawpopups = draw;
 }
 
-updateDrawPopups(ann)
+updateAnnouncements(ann)
 {
     level.exp_announcements = ann;
 }
@@ -653,105 +675,125 @@ updateEXPHUD()
             case "headshot":
                 self EXP_updateEXP(level.exp_assistvalue);
                 text = game["exp_headshotText"];
+		announce = game["exp_headshotAnnounce"];
                 break;
             case "double_kill":
                 self EXP_updateEXP(level.exp_assistvalue);
                 text = game["exp_doubleKillText"];
+		announce = game["exp_doubleKillAnnounce"];
                 break;
             case "triple_kill":
                 self EXP_updateEXP(level.exp_assistvalue);
                 text = game["exp_tripleKillText"];
+		announce = game["exp_tripleKillAnnounce"];
                 break;
             case "multi_kill":
                 self EXP_updateEXP(level.exp_killvalue);
                 text = game["exp_multiKillText"];
+		announce = game["exp_multiKillAnnounce"];
                 break;
             case "bloodthirsty":
                 self EXP_updateEXP(level.exp_killvalue);
                 text = game["exp_fiveKillText"];
+		announce = game["exp_multiKillAnnounce"];
                 break;
             case "killing_spree":
                 self EXP_updateEXP(level.exp_killvalue);
                 text = game["exp_tenKillText"];
+		announce = game["exp_tenKillAnnounce"];
                 break; 
             case "bomb_plant":
                 self EXP_updateEXP(level.exp_killvalue);
                 self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["bombPlantedText"];
+		announce = "planted the bomb";
                 break;
             case "bomb_defuse":
                 self EXP_updateEXP(level.exp_killvalue);
                 self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["bombDefusedText"];
+		announce = "defused the bomb";
                 break;
             case "flag_take":
                 self EXP_updateEXP(level.exp_assistvalue);
                 self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_takeFlagText"];
+		announce = game["exp_takeFlagAnnounce"];
                 break;
             case "flag_returned":
                 self EXP_updateEXP(level.exp_assistvalue);
                 self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_returnFlagText"];
+		announce = game["exp_returnFlagAnnounce"];
                 break;
             case "flag_captured":
                 self EXP_updateEXP(level.exp_killvalue);
                 self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["exp_captureFlagText"];
+		announce = game["exp_captureFlagAnnounce"];
                 break;
             case "flag_defense":
                 self EXP_updateEXP(level.exp_assistvalue);
                 self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_defendFlagText"];
+		announce = game["exp_defendFlagAnnounce"];
                 break;
             case "flag_assist":
                 self EXP_updateEXP(level.exp_assistvalue);
                 self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_assistFlagText"];
+		announce = game["exp_assistFlagAnnounce"];
                 break;
             case "bel_survived":
                 self EXP_updateEXP(level.exp_assistvalue);
                 self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_survivedText"];
+		announce = game["exp_survivedAnnounce"];
                 break;
             case "bel_kill_allied":
                 self EXP_updateEXP(level.exp_killvalue);
                 self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["exp_killAlliedText"];
+		announce = game["exp_killAlliedAnnounce"];
                 break;
             case "re_pickup":
                 self EXP_updateEXP(level.exp_assistvalue);
                 self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_pickupText"];
+		announce = game["exp_pickupAnnounce"];
                 break;
             case "re_captured":
                 self EXP_updateEXP(level.exp_killvalue);
                 self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["exp_captureText"];
+		announce = game["exp_captureAnnounce"];
                 break;
             case "radio_captured":
                 self EXP_updateEXP(level.exp_killvalue);
                 self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["exp_captureRadioText"];
+		announce = game["exp_captureRadioAnnounce"];
                 break;
             case "radio_destroyed":
                 self EXP_updateEXP(level.exp_killvalue);
                 self thread EXP_HudPop(level.exp_killvalue * level.exp_multiplier);
                 text = game["exp_destroyRadioText"];
+		announce = game["exp_destroyRadioAnnounce"];
                 break;
             case "radio_hold":
                 self EXP_updateEXP(level.exp_assistvalue);
                 self thread EXP_HudPop(level.exp_assistvalue * level.exp_multiplier);
                 text = game["exp_holdRadioText"];
+		announce = game["exp_holdRadioAnnounce"];
                 break;
         }
         self thread EXP_HudSlam(text);
-        self thread EXP_Announce(self.notification, text); //TODO implement significant notification menu
+        self EXP_Announce(self.notification, text, announce); //TODO implement significant notification menu
         self.notification = undefined;
     }
 }
 
-EXP_Announce(notif, text)
+EXP_Announce(notif, text, announce)
 {
     //if the notification is set as signifcant
     arr = maps\mp\uox\_uox_utils::stringSplit(level.exp_announcements, " ");
@@ -760,7 +802,7 @@ EXP_Announce(notif, text)
     {
         if(arr[i] == notif)
         {
-            self iprintln(self.name + "^7: " + text);
+            iprintln(self.name + "^7: " + announce);
         }
     }
 }
