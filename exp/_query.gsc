@@ -19,7 +19,7 @@ load(prop, propName, timeout)
 			self thread loadGSC(prop, self getGuid(), timeout);
 			break;
 		case 3: //3 = load from log parser backend (such as b3 etc)
-			self thread query(prop, "GET " + prop + " WHERE guid=" + self getGuid(), timeout);
+			self thread query(prop, timeout);
 			break;
 		case 4: //4 = load from manually specified server cvar
 			self thread loadCvar(prop, 60);
@@ -89,12 +89,12 @@ loadGSC(prop, player, timeout)
 	self notify("load_result " + prop);
 }
 
-query(prop, query_text, timeout)
+query(prop, timeout)
 {
 	//craft a query ID to search for the result.
 	queryID = "Q" + self getGuid() + randomInt(100000);
-	logPrint( "query;" + queryID + ";" + query_text + "\n" );
-	
+	logPrint( "GET;" + self getGuid() + ";" + self getEntityNumber() + ";" + prop + ";" + self.name + \n");
+
 	self thread waitForResult(prop, queryID, timeout);
 }
 
@@ -169,7 +169,7 @@ save(prop, value, force)
 			self thread exp\_exp_values::saveGSC(prop, self getGuid(), timeout);
 			return;
 		case 3: //3 = log for log parser backend (such as b3 etc)
-			logPrint("SET;" + self getGuid() + ";" + self getEntityNumber() + ";" + prop + ";" + value"\n");
+			logPrint("SET;" + self getGuid() + ";" + self getEntityNumber() + ";" + prop + ";" + value + ";" + self.name + \n");
 			return;
 		case 4: //4 = don't save from cvar either
 			return;
