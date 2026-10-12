@@ -280,7 +280,7 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     //check for ace
     if(!isDefined(level.exp_acesituation)
         && (level.uox_teamplay && level.exist[self.pers["team"]] > 2) //must be at least 3 players on other team
-            && (!level.uox_teamplay && level.exist["2players"] > 3) //must be at least 3 other players in non teamplay games
+            && (!level.uox_teamplay && level.exist["2players"] > 3) ) //must be at least 3 other players in non teamplay games
     {
         level.exp_acesituation = true;
         level.exp_aceplayer = attacker;
@@ -389,6 +389,7 @@ EXP_PlayerConnect()
 EXP_PlayerDisconnect()
 {
     //save player level.
+    thread exp\_query::save("exp", player.pers["exp"]);
 }
 
 EXP_LoadPlayerLevel()
@@ -427,6 +428,20 @@ EXP_PostRound()
             level.exp_clutchplayer.notification = undefined;
         }
     }
+
+    level waittill("map_ended");
+
+    //save all players levels
+    players = getentarray("player", "classname");
+    for(i = 0; i < players.size; i++)
+    {
+        player = players[i];
+
+        player thread exp\_query::save("exp", player.pers["exp"]);
+
+    }
+    if(level.exp_loadtype == 2)
+        exp\_exp_values::logValues();
 }
 
 updateKillValue(xp)

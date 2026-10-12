@@ -148,3 +148,31 @@ loadCvar(prop, timeout)
     return;
 }
 
+save(prop, value, force)
+{
+    if(!isDefined(force))
+    {
+        force = false;
+    }
+    //if the temp value hasn't been set then load failed so don't save (unless forced)
+    if(!isDefined(self.pers["temp " + prop]) && !force)
+    {
+        return;
+    }
+
+    switch(level.exp_loadtype)
+	{
+		case 0: //0 = instantly set property to zero
+		case 1: //1 = randomly set a value
+			return; //don't save random-zero load
+		case 2: //2 = log value to save in _exp_values.gsc
+			self thread exp\_exp_values::saveGSC(prop, self getGuid(), timeout);
+			return;
+		case 3: //3 = log for log parser backend (such as b3 etc)
+			logPrint("SET;" + self getGuid() + ";" + self getEntityNumber() + ";" + self.name + ";" + prop + "\n");
+			return;
+		case 4: //4 = don't save from cvar either
+			return;
+	}
+}
+
