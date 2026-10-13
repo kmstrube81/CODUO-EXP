@@ -361,16 +361,16 @@ drawPlayerCard(player, pos)
 			guiOptions["x"] = 260;
 			guiOptions["y"] = playercardY + 11;
 			guiOptions["fontscale"] = 0.8;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("totalkills", "value", kills, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totalkills", "number", kills, guiOptions);
 
             guiOptions["label"] = &"D: ";
 			guiOptions["x"] = 308;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("totaldeaths", "value", deaths, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totaldeaths", "number", deaths, guiOptions);
 
             guiOptions["label"] = &"S: ";
 			guiOptions["x"] = 260;
 			guiOptions["y"] = playercardY + 21;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "value", kills, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "number", kills, guiOptions);
 			break;
 		case 2:
 			options["width"] = 192;
@@ -394,17 +394,17 @@ drawPlayerCard(player, pos)
             guiOptions["label"] = &"K: ";
 			guiOptions["x"] = 228;
 			guiOptions["y"] = playercardY + 17;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("totalkills", "value", kills, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totalkills", "number", kills, guiOptions);
 
             guiOptions["label"] = &"D: ";
 			guiOptions["x"] = 300;
 			guiOptions["y"] = playercardY + 17;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("totaldeaths", "value", deaths, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totaldeaths", "number", deaths, guiOptions);
 
             guiOptions["label"] = &"S: ";
 			guiOptions["x"] = 228;
 			guiOptions["y"] = playercardY + 32;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "value", kills, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "number", kills, guiOptions);
 			break;
 		default:
 			options["width"] = 256;
@@ -427,15 +427,15 @@ drawPlayerCard(player, pos)
 
 			guiOptions["x"] = 288;
 			guiOptions["y"] = playercardY + 22;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("totalkills", "value", kills, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totalkills", "number", kills, guiOptions);
 
 			guiOptions["x"] = 384;
 			guiOptions["y"] = playercardY + 22;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("totaldeaths", "value", deaths, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totaldeaths", "number", deaths, guiOptions);
 
 			guiOptions["x"] = 288;
 			guiOptions["y"] = playercardY + 42;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "value", kills, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "number", kills, guiOptions);
 	}
 	
 	if(pos > 0)
