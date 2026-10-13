@@ -451,6 +451,10 @@ EXP_LoadPlayercard()
     self thread exp\_query::load("emblem", "Playercard Emblem");
     self.pers["callsign"] = 0;
     self thread exp\_query::load("callsign", "Playercard Callsign");
+
+    self thread exp\_query::load("totalkills", "Career Kills");
+    self thread exp\_query::load("totaldeaths", "Career Deaths");
+    self thread exp\_query::load("skill", "Skill Rating");
 }
 
 EXP_PostRound()
