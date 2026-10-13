@@ -269,15 +269,22 @@ drawPlayerCard(player, pos)
 	playercard_size = level.exp_playercard_size;	
 	
 	emblemIndex = player.pers["emblem"];
-		
+	
+    if(emblemIndex >= game["emblems"].size)
+        emblemIndex = 0;
+
 	emblem = game["emblems"][emblemIndex];
 		
 	backgroundIndex = player.pers["background"];
-		
+	if(backgroundIndex >= game["playercards"].size)
+        backgroundIndex = 0;
+
 	playercard = game["playercards"][backgroundIndex];
 		
 	callsignIndex = player.pers["callsign"];
-		
+	if(callsignIndex >= game["callsigns"].size)
+        callsignIndex = 0;
+
 	callsign = game["callsigns"][callsignIndex];
 		
 	kills = player.pers["totalkills"];
