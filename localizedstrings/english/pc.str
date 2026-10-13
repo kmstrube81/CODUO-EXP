@@ -1,0 +1,151 @@
+// Note to translators:
+// If a sentence is the same in your language then please change it to "#same"
+//
+// eg:
+// LANG_ENGLISH  "HALT"
+// LANG_GERMAN   "#same"
+//
+// (This is so we can tell which strings have been signed-off as ok to be the same words for QA
+//  and because we do not store duplicate strings, which will then get exported again next time
+//  as being untranslated.)
+//
+VERSION             "1"
+CONFIG              "C:\COD\bin\StringEd\StringEd.cfg"
+FILENOTES           ""
+
+REFERENCE           CALLSIGN0
+LANG_ENGLISH        "New Pugger"
+
+REFERENCE           CALLSIGN1
+LANG_ENGLISH        "DSR"
+
+REFERENCE           CALLSIGN2
+LANG_ENGLISH        "Cracked Aiming Legend"
+
+REFERENCE           CALLSIGN3
+LANG_ENGLISH        "SJ LEAG Player"
+
+REFERENCE           CALLSIGN4
+LANG_ENGLISH        "AVG CODUO Player"
+
+REFERENCE           CALLSIGN5
+LANG_ENGLISH        "Euro Player"
+
+REFERENCE           CALLSIGN6
+LANG_ENGLISH        "Pug Star"
+
+REFERENCE           CALLSIGN7
+LANG_ENGLISH        "Tummy Sticks World Champ"
+
+REFERENCE           CALLSIGN8
+LANG_ENGLISH        "girthquake"
+
+REFERENCE           CALLSIGN9
+LANG_ENGLISH        "dienasty"
+
+REFERENCE           CALLSIGN10
+LANG_ENGLISH        ".EXE"
+
+REFERENCE           CALLSIGN11
+LANG_ENGLISH        "Probably a Camper"
+
+REFERENCE           CALLSIGN12
+LANG_ENGLISH        "Touch Grass"
+
+REFERENCE           CALLSIGN13
+LANG_ENGLISH        "John Stockton"
+
+REFERENCE           CALLSIGN14
+LANG_ENGLISH        "Wigglin' on it"
+
+REFERENCE           CALLSIGN15
+LANG_ENGLISH        "Freaky Style"
+
+REFERENCE           CALLSIGN16
+LANG_ENGLISH        "Green Thumb"
+
+REFERENCE           CALLSIGN17
+LANG_ENGLISH        "Ninja Defuser"
+
+REFERENCE           CALLSIGN18
+LANG_ENGLISH        "Target(+)Master"
+
+REFERENCE           CALLSIGN19
+LANG_ENGLISH        "Mrs. Bert 55"
+
+REFERENCE           CALLSIGN20
+LANG_ENGLISH        "BAR Hopper"
+
+REFERENCE           CALLSIGN21
+LANG_ENGLISH        "M1 Garand Expert"
+
+REFERENCE           CALLSIGN22
+LANG_ENGLISH        "M1A1 Carbine Gooner"
+
+REFERENCE           CALLSIGN23
+LANG_ENGLISH        "Springfield Master"
+
+REFERENCE           CALLSIGN24
+LANG_ENGLISH        ".30 Cal Supporter"
+
+REFERENCE           CALLSIGN25
+LANG_ENGLISH        "Colt 45 Expert"
+
+REFERENCE           CALLSIGN26
+LANG_ENGLISH        "KAR98k Enjoyer"
+
+REFERENCE           CALLSIGN27
+LANG_ENGLISH        "MP40 User"
+
+REFERENCE           CALLSIGN28
+LANG_ENGLISH        "MP44 Expert"
+
+REFERENCE           CALLSIGN29
+LANG_ENGLISH        "Gewehr43 Guy"
+
+REFERENCE           CALLSIGN30
+LANG_ENGLISH        "Scoped Kar98k Sniper"
+
+REFERENCE           CALLSIGN31
+LANG_ENGLISH        "MG34 Master"
+
+REFERENCE           CALLSIGN32
+LANG_ENGLISH        "Luger Legend"
+
+REFERENCE           CALLSIGN33
+LANG_ENGLISH        "Lee-Enfield Legend"
+
+REFERENCE           CALLSIGN34
+LANG_ENGLISH        "Sten Stan"
+
+REFERENCE           CALLSIGN35
+LANG_ENGLISH        "Bren Bro"
+
+REFERENCE           CALLSIGN36
+LANG_ENGLISH        "Webley Weiner"
+
+REFERENCE           CALLSIGN37
+LANG_ENGLISH        "Mosin Nagant Comrade"
+
+REFERENCE           CALLSIGN38
+LANG_ENGLISH        "PPSh Wizard"
+
+REFERENCE           CALLSIGN39
+LANG_ENGLISH        "DP28 Enjoyer"
+
+REFERENCE           CALLSIGN40
+LANG_ENGLISH        "SVT40 Sicko"
+
+REFERENCE           CALLSIGN41
+LANG_ENGLISH        "Scoped Mosin Nagant Marksman"
+
+REFERENCE           CALLSIGN42
+LANG_ENGLISH        "TT34 Expert"
+
+REFERENCE           CALLSIGN43
+LANG_ENGLISH        "Catch this!"
+
+REFERENCE           CALLSIGN44
+LANG_ENGLISH        "Tactical Smoke"
+
+ENDMARKER
