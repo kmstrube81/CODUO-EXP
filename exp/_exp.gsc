@@ -35,6 +35,10 @@ EXP_Vars()
     level.exp_announcements = maps\mp\uox\_uox_vars::varDef("exp","announce", "string", true, "", "", "", "Acheivements to Announce", ::updateAnnouncements);
 
     level.exp_unlockall = maps\mp\uox\_uox_vars::varDef("exp", "levelunlock_all", "bool", false, true, "", "");
+
+    //playercard support
+    level.exp_drawplayercards = maps\mp\uox\_uox_vars::varDef("exp", "drawplayercards", "bool", true, true, "", "", "Draw Playercard", ::updatePlayercard);
+    level.exp_playercard_size = maps\mp\uox\_uox_vars::varDef("exp", "playercard_size", "int", true, 1, 1, 3, ::updatePlayercardSize);
 }
 
 EXP_Precache()
@@ -130,6 +134,7 @@ EXP_DefineMenus()
     if(!isDefined(game["exp_gamestarted"]))
     {
         //define custom menus here
+        game["menu_playercard"] = "menu_playercard";
         game["exp_gamestarted"] = true;
     }
     EXP_SetupMenuHandlers();
@@ -141,50 +146,25 @@ EXP_SetupMenuHandlers()
     //set up menu handlers
     if(!isDefined(level.menuHandlers))
         level.menuHandlers = maps\mp\uox\_uox_arrays::superArray();
+
+    maps\mp\uox\_uox_menus::registerMenu(game["menu_playercard"], exp\_playercard::handleMenuResponse, true, "playercard");
     //override weapon select handling
     //handle weapons - all
-    handlers = maps\mp\uox\_uox_arrays::getValue(level.menuHandlers, game["menu_weapon_all"]);
-    if(!isDefined(handlers))
-    {
-        handlers = [];
-        handlers[0] = ::EXP_handleWeaponMenu;
-    }
-    else
-    {
-        handlers = maps\mp\uox\_uox_arrays::arrayUnshift(handlers, ::EXP_handleWeaponMenu);
-    }
-    level.menuHandlers = maps\mp\uox\_uox_arrays::arrayUnshift(level.menuHandlers, handlers, game["menu_weapon_all"]);
+    maps\mp\uox\_uox_menus::registerMenu(game["menu_weapon_all"], ::EXP_handleWeaponMenu, false);
     //handle weapons - allies
-    handlers = maps\mp\uox\_uox_arrays::getValue(level.menuHandlers, game["menu_weapon_allies"]);
-    if(!isDefined(handlers))
-    {
-        handlers = [];
-        handlers[0] = ::EXP_handleWeaponMenu;
-    }
-    else
-    {
-        handlers = maps\mp\uox\_uox_arrays::arrayUnshift(handlers, ::EXP_handleWeaponMenu);
-    }
-    level.menuHandlers = maps\mp\uox\_uox_arrays::arrayUnshift(level.menuHandlers, handlers, game["menu_weapon_allies"]);
+    maps\mp\uox\_uox_menus::registerMenu(game["menu_weapon_allies"], ::EXP_handleWeaponMenu, false);
     //hande weapons - axis
-    handlers = maps\mp\uox\_uox_arrays::getValue(level.menuHandlers, game["menu_weapon_axis"]);
-    if(!isDefined(handlers))
-    {
-        handlers = [];
-        handlers[0] = ::EXP_handleWeaponMenu;
-    }
-    else
-    {
-        handlers = maps\mp\uox\_uox_arrays::arrayUnshift(handlers, ::EXP_handleWeaponMenu);
-    }
-    level.menuHandlers = maps\mp\uox\_uox_arrays::arrayUnshift(level.menuHandlers, handlers, game["menu_weapon_axis"]);
+    maps\mp\uox\_uox_menus::registerMenu(game["menu_weapon_axis"], ::EXP_handleWeaponMenu, false);
 }
 
 EXP_StartGameType()
 {
     EXP_Vars();
     if(!isDefined(game["gamestarted"]))
+    {
         EXP_Precache();
+        exp\_playercard::precachePlayerCardElems();
+    }
 
     thread EXP_PostRound();
 }
@@ -489,6 +469,16 @@ updateDrawPopups(draw)
 updateAnnouncements(ann)
 {
     level.exp_announcements = ann;
+}
+
+updatePlayercard(draw)
+{
+    level.exp_drawplayercards = draw;
+}
+
+updatePlayercardSize(size)
+{
+    level.exp_playercard_size = size;
 }
 
 updateDrawRank(drawrank)

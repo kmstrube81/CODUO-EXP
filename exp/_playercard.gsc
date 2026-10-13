@@ -263,185 +263,165 @@ drawPlayerCard(player, pos)
 	self endon("flash_playercard");
 	self notify("flash_playercard");
 	
-	if(!isDefined(player))
+	if(!isDefined(player) || !isPlayer(player))
 		return;
-	
-	id = player getEntityNumber();
-	
-	/*if(getCvar("playercard_size") == "")
-		playercard_size = 1;
-	else
-		playercard_size = getCvarInt("playercard_size"); //3 256 x 64 | 2 192 x 48 | 1 128 x 32 */
+    
 	playercard_size = level.exp_playercard_size;	
 	
-	
-	emblemIndex = self.pers["emblem"];
+	emblemIndex = player.pers["emblem"];
 		
 	emblem = game["emblems"][emblemIndex];
 		
-	backgroundIndex = self.pers["background"];
+	backgroundIndex = player.pers["background"];
 		
 	playercard = game["playercards"][backgroundIndex];
 		
-	callsignIndex = self.pers["callsign"];
+	callsignIndex = player.pers["callsign"];
 		
 	callsign = game["callsigns"][callsignIndex];
 		
-	kills = self.pers["totalkills"];
+	kills = player.pers["totalkills"];
 		
-	deaths = self.pers["totaldeaths"];
+	deaths = player.pers["totaldeaths"];
 
-	skills = self.pers["skill"];
+	skills = player.pers["skill"];
 	
-	
-	if(isDefined(self.playerCard))
-		self.playerCard destroy();
-	self.playerCard = newClientHudElem(self);
-	self.playerCard.sort = 1;
-    self.playerCard.color = (1,1,1);
-    self.playerCard.alpha = 1;
-	self.playerCard.archived = false;
-	if(isDefined(self.emblem))
-		self.emblem destroy();
-	self.emblem = newClientHudElem(self);
-	self.emblem.sort = 2;
-	self.emblem.archived = false;
-	if(isDefined(self.callsign))
-		self.callsign destroy();
-	self.callsign = newClientHudElem(self);
-	self.callsign.alignX = "center";
-	self.callsign.sort = 3;
-    self.callsign.font = "default";
-	self.callsign.archived = false;
-	self.callsign setText(callsign);
-	if(isDefined(self.killsgui))
-		self.killsgui destroy();
-	self.killsgui = newClientHudElem(self);
-	self.killsgui.sort = 3;
-    self.killsgui.font = "default";
-	self.killsgui.label = &"K: ";
-	self.killsgui.archived = false;
-	self.killsgui setValue(kills);
-	if(isDefined(self.deathsgui))
-		self.deathsgui destroy();
-	self.deathsgui = newClientHudElem(self);
-	self.deathsgui.sort = 3;
-    self.deathsgui.font = "default";
-	self.deathsgui.label = &"D: ";
-	self.deathsgui.archived = false;
-	self.deathsgui setValue(deaths);
-	if(isDefined(self.skillgui))
-		self.skillgui destroy();
-	self.skillgui = newClientHudElem(self);	
-	self.skillgui.sort = 3;
-    self.skillgui.font = "default";
-	self.skillgui.label = &"S: ";
-	self.skillgui.archived = false;
-	self.skillgui setValue(skill);
+	options = [];
+    options["sort"] = 1;
+    options["color"] = (1,1,1);
+    options["alpha"] = 1;
+    options["archived"] = false;
+
+    emblemOptions = [];
+    emblemOptions["sort"] = 2;
+    emblemOptions["archived"] = false;
+
+    callsignOptions = [];
+    callsignOptions["alignX"] = "center";
+    callsignOptions["sort"] = 3;
+    callsignOptions["font"] = "default";
+    callsignOptions["archived"] = false;
+
+    guiOptions = [];
+    guiOptions["sort"] = 3;
+    guiOptions["font"] = "default";
+    guiOptions["archived"] = false;
 	
 	switch(pos)
-		{
-			case 0:
-			case 1:
-				playercardY = 320;
-				break;
-			case 2:
-				self iprintlnbold("Killed By " + player.name);
-				playercardY = 150;
-				break;
-			default:
-				playercardY = 376;
-		}
+    {
+        case 0:
+        case 1:
+            playercardY = 320;
+            break;
+        case 2:
+            self iprintlnbold("Killed By " + player.name);
+            playercardY = 150;
+            break;
+        default:
+            playercardY = 376;
+    }
 	
 	switch(playercard_size)
 	{
 		case 1:
-			self.playerCard.width = 128;
-			self.playerCard.height = 32;
-			self.playerCard.x = 256;
-			self.playerCard.y = playercardY;
-			self.playerCard setShader(playercard, 128, 32);
-			self.emblem.width = 32;
-			self.emblem.height = 32;
-			self.emblem.x = 352;
-			self.emblem.y = playercardY;
-			self.emblem setShader(emblem, 32, 32);
-			self.callsign.width = 96;
-			self.callsign.height = 10;
-			self.callsign.x = 304;
-			self.callsign.y = playercardY + 1;
-			self.callsign.fontscale = 0.8;
-			self.killsgui.width = 48;
-			self.killsgui.height = 10;
-			self.killsgui.x = 260;
-			self.killsgui.y = playercardY + 11;
-			self.killsgui.fontscale = 0.8;
-			self.deathsgui.width = 48;
-			self.deathsgui.height = 10;
-			self.deathsgui.x = 308;
-			self.deathsgui.y = playercardY + 11;
-			self.deathsgui.fontscale = 0.8;
-			self.skillgui.width = 96;
-			self.skillgui.height = 10;
-			self.skillgui.x = 260;
-			self.skillgui.y = playercardY + 21;
-			self.skillgui.fontscale = 0.8;
+			options["width"] = 128;
+			options["height"] = 32;
+			options["x"] = 256;
+			options["y"] = playercardY;
+            options["width"] = 128;
+            options["height"] = 32;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("playercard", "shader", playercard, options);
+
+			emblemOptions["width"] = 32;
+			emblemOptions["height"] = 32;
+			emblemOptions["x"] = 352;
+			emblemOptions["y"] = playercardY;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("emblem", "shader", emblem, emblemOptions);
+			
+			callsignOptions["x"] = 304;
+			callsignOptions["y"] = playercardY + 1;
+			callsignOptions["fontscale"] = 0.8;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("callsign", "text", callsign, callsignOptions);
+
+            guiOptions["label"] = &"K: ";
+			guiOptions["x"] = 260;
+			guiOptions["y"] = playercardY + 11;
+			guiOptions["fontscale"] = 0.8;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totalkills", "value", kills, guiOptions);
+
+            guiOptions["label"] = &"D: ";
+			guiOptions["x"] = 308;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totaldeaths", "value", deaths, guiOptions);
+
+            guiOptions["label"] = &"S: ";
+			guiOptions["x"] = 260;
+			guiOptions["y"] = playercardY + 21;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "value", kills, guiOptions);
 			break;
 		case 2:
-			self.playerCard.width = 192;
-			self.playerCard.height = 48;
-			self.playerCard.x = 224;
-			self.playerCard.y = playercardY;
-			self.playerCard setShader(playercard, 192, 48);
-			self.emblem.width = 48;
-			self.emblem.height = 48;
-			self.emblem.x = 368;
-			self.emblem.y = playercardY;
-			self.emblem setShader(emblem, 48, 48);
-			self.callsign.width = 144;
-			self.callsign.height = 15;
-			self.callsign.x = 296;
-			self.callsign.y = playercardY + 2;
-			self.killsgui.width = 72;
-			self.killsgui.height = 15;
-			self.killsgui.x = 228;
-			self.killsgui.y = playercardY + 17;
-			self.deathsgui.width = 72;
-			self.deathsgui.height = 15;
-			self.deathsgui.x = 300;
-			self.deathsgui.y = playercardY + 17;
-			self.skillgui.width = 144;
-			self.skillgui.height = 15;
-			self.skillgui.x = 228;
-			self.skillgui.y = playercardY + 32;
+			options["width"] = 192;
+			options["height"] = 48;
+			options["x"] = 224;
+			options["y"] = playercardY;
+            options["width"] = 192;
+            options["height"] = 48;
+			self maps\mp\uox\_uox_hud::updateClientHUDElement("playercard", "shader", playercard, options);
+
+			emblemOptions["width"] = 48;
+			emblemOptions["height"] = 48;
+			emblemOptions["x"] = 368;
+			emblemOptions["y"] = playercardY;
+			self maps\mp\uox\_uox_hud::updateClientHUDElement("emblem", "shader", emblem, emblemOptions);
+
+			callsignOptions["x"] = 296;
+			callsignOptions["y"] = playercardY + 2;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("callsign", "text", callsign, callsignOptions);
+
+            guiOptions["label"] = &"K: ";
+			guiOptions["x"] = 228;
+			guiOptions["y"] = playercardY + 17;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totalkills", "value", kills, guiOptions);
+
+            guiOptions["label"] = &"D: ";
+			guiOptions["x"] = 300;
+			guiOptions["y"] = playercardY + 17;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totaldeaths", "value", deaths, guiOptions);
+
+            guiOptions["label"] = &"S: ";
+			guiOptions["x"] = 228;
+			guiOptions["y"] = playercardY + 32;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "value", kills, guiOptions);
 			break;
 		default:
-			self.playerCard.width = 256;
-			self.playerCard.height = 64;
-			self.playerCard.x = 192;
-			self.playerCard.y = playercardY;
-			self.playerCard setShader(playercard, 256, 64);
-			self.emblem.width = 64;
-			self.emblem.height = 64;
-			self.emblem.x = 384;
-			self.emblem.y = playercardY;
-			self.emblem setShader(emblem, 64, 64);
-			self.callsign.width = 192;
-			self.callsign.height = 20;
-			self.callsign.x = 288;
-			self.callsign.y = playercardY + 2;
-			self.killsgui.width = 96;
-			self.killsgui.height = 20;
-			self.killsgui.x = 288;
-			self.killsgui.y = playercardY + 22;
-			self.deathsgui.width = 96;
-			self.deathsgui.height = 20;
-			self.deathsgui.x = 384;
-			self.deathsgui.y = playercardY + 22;
-			self.skillgui.width = 192;
-			self.skillgui.height = 20;
-			self.skillgui.x = 288;
-			self.skillgui.y = playercardY + 42;
+			options["width"] = 256;
+			options["height"] = 64;
+			options["x"] = 192;
+			options["y"] = playercardY;
+            options["width"] = 256;
+            options["height"] = 64;
+			self maps\mp\uox\_uox_hud::updateClientHUDElement("playercard", "shader", playercard, options);
+
+			emblemOptions["width"] = 64;
+			emblemOptions["height"] = 64;
+			emblemOptions["x"] = 384;
+			emblemOptions["y"] = playercardY;
+			self maps\mp\uox\_uox_hud::updateClientHUDElement("emblem", "shader", emblem, emblemOptions);
+
+			callsignOptions["x"] = 288;
+			callsignOptions["y"] = playercardY + 2;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("callsign", "text", callsign, callsignOptions);
+
+			guiOptions["x"] = 288;
+			guiOptions["y"] = playercardY + 22;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totalkills", "value", kills, guiOptions);
+
+			guiOptions["x"] = 384;
+			guiOptions["y"] = playercardY + 22;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("totaldeaths", "value", deaths, guiOptions);
+
+			guiOptions["x"] = 288;
+			guiOptions["y"] = playercardY + 42;
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "value", kills, guiOptions);
 	}
 	
 	if(pos > 0)
@@ -453,6 +433,7 @@ drawPlayerCard(player, pos)
 
 spawnedPlayerCardCleanup()
 {
+    self endon("disconnect");
 	self endon("destroy_playercard");
 	self waittill("spawned");
 	
@@ -461,6 +442,7 @@ spawnedPlayerCardCleanup()
 
 waitPlayerCard()
 {
+    self endon("disconnect");
 	self endon("destroy_playercard");
 	wait 7;
 	
@@ -469,7 +451,7 @@ waitPlayerCard()
 
 destroyPlayerCard(pos)
 {
-	
+	self endon("disconnect");
 	self waittill("destroy_playercard");
 	
 	if(pos == 2)
@@ -481,30 +463,28 @@ destroyPlayerCard(pos)
 		self iprintlnbold(" ");
 	}
 	
-	if(isDefined(self.playerCard))
-		self.playerCard destroy();
-	if(isDefined(self.emblem))
-		self.emblem destroy();
-	if(isDefined(self.callsign))
-		self.callsign destroy();
-	if(isDefined(self.killsgui))
-		self.killsgui destroy();
-	if(isDefined(self.deathsgui))
-		self.deathsgui destroy();
-	if(isDefined(self.skillgui))
-		self.skillgui destroy();
+    self deleteClientHUDElement("playercard");
+	self deleteClientHUDElement("emblem");
+	self deleteClientHUDElement("callsign");
+	self deleteClientHUDElement("totalkills");
+	self deleteClientHUDElement("totaldeaths");
+	self deleteClientHUDElement("skill");
 
 }
 
 spectatePlayerCard()
 {
 	self endon("spawned");
-	self endon("corrupt_killcam");
+	self endon("final_killcam");
 	
-	oldspec = undefined;
-	oldorigin = (0,0,0);
+	self.oldspec = undefined;
+	self.oldorigin = (0,0,0);
 	self.spectatedclient = self getSpectatorClient("next");
 	self drawPlayerCard(self.spectatedclient, 0);
+
+    self maps\mp\uox\_uox_inputs::addHoldMelee("spectate prev", false, 0, 0, undefined, ::spectatePrev);
+    self maps\mp\uox\_uox_inputs::addHoldFire("spectate next", false, 0, 0, undefined, ::spectateNext);
+    self maps\mp\uox\_uox_loops::addToLoop(self, "fast", ::testSpectateClient, "testSpectateClient");
 	while(true)
 	{
 		
@@ -555,6 +535,53 @@ spectatePlayerCard()
 		oldspec = self.spectatedclient;
 		wait 0.05;
 	}
+}
+
+testSpectateClient()
+{
+    if(self.origin != self.oldorigin) //free spectating
+    {
+        self.spectatedclient = undefined;
+        self notify("destroy_playercard");
+    }
+		
+	self.oldorigin = self.origin; //set new spectate origin setting
+
+    if(isDefined(self.spectatedclient) && !isAlive(self.spectatedclient)) //spectate next player if spectated player dies
+        self spectateNext();
+
+    if(isDefined(self.spectatedclient)) //draw the new player card
+    {
+        if(isDefined(self.oldspec) && self.oldspec != self.spectatedclient)
+        {
+            self drawPlayerCard(self.spectatedclient, 0);
+        }
+    }
+    self.oldspec = self.spectatedclient;
+}
+
+spectateNext()
+{
+    self.spectatedclient = self getSpectatorClient("next");
+    self iprintlnbold(" ");
+    self iprintlnbold(" ");
+    self iprintlnbold(" ");
+    self iprintlnbold(" ");
+    name = getPlayerName(self.spectatedclient);
+    if(isDefined(name))
+        self iprintlnbold("Spectating: " + name);
+}
+
+spectatePrev()
+{
+    self.spectatedclient = self getSpectatorClient("prev");
+    self iprintlnbold(" ");
+    self iprintlnbold(" ");
+    self iprintlnbold(" ");
+    self iprintlnbold(" ");
+    name = getPlayerName(self.spectatedclient);
+    if(isDefined(name))
+        self iprintlnbold("Spectating: " + name);
 }
 
 getPlayerName(player)
@@ -676,21 +703,24 @@ getSpectatorClient(dir)
 handleMenuResponse(response)
 {
 
-	id = self getEntityNumber();
-	if(getCvar("playercard_" + id + "_kills") == "")
-		kills = self.score;
-	else
-		kills = getCvarInt("playercard_" + id + "_kills");
+	emblemIndex = self.pers["emblem"];
+		
+	emblem = game["emblems"][emblemIndex];
+		
+	backgroundIndex = self.pers["background"];
+		
+	playercard = game["playercards"][backgroundIndex];
+		
+	callsignIndex = self.pers["callsign"];
+		
+	callsign = game["callsigns"][callsignIndex];
+		
+	kills = self.pers["totalkills"];
+		
+	deaths = self.pers["totaldeaths"];
 
-	if(getCvar("playercard_" + id + "_deaths") == "")
-		deaths = self.deaths;
-	else
-		deaths = getCvarInt("playercard_" + id + "_deaths");
+	skills = self.pers["skill"];
 
-	if(getCvar("playercard_" + id + "_skill") == "")
-		skill = 0;
-	else
-		skill = getCvarFloat("playercard_" + id + "_skill");
 	if(!isDefined(self.csIndex))
 		self.csIndex = getCvarInt("playercard_" + id + "_callsign");
 	if(!isDefined(self.emIndex))
@@ -698,9 +728,9 @@ handleMenuResponse(response)
 	if(!isDefined(self.bgIndex))
 		self.bgIndex = getCvarInt("playercard_" + id + "_background");
 	
-	self setClientCvar("ui_playercard_cs", game["menu_callsigns"][self.csIndex]);
-	self setClientCvar("ui_playercard_em", game["emblems"][self.emIndex]);
-	self setClientCvar("ui_playercard_bg", game["playercards"][self.bgIndex]);
+	self setClientCvar("ui_playercard_cs", callsign);
+	self setClientCvar("ui_playercard_em", emblem);
+	self setClientCvar("ui_playercard_bg", playercard);
 	self setClientCvar("ui_playercard_ks", "K: " + kills);
 	self setClientCvar("ui_playercard_ds", "D: " + deaths);
 	self setClientCvar("ui_playercard_sk", "S: " + skill);
@@ -727,55 +757,54 @@ handleMenuResponse(response)
 			self openMenu(game["menu_playercard"]);
 			break;			
 		case "prevCS":
-			self.csIndex--;
-			if(self.csIndex < 0)
-				self.csIndex = game["menu_callsigns"].size - 1;
-			self setClientCvar("ui_playercard_cs", game["menu_callsigns"][self.csIndex]);
+			self.pers["callsign"]--;
+			if(self.pers["callsign"] < 0)
+				self.pers["callsign"] = game["menu_callsigns"].size - 1;
+			self setClientCvar("ui_playercard_cs", game["menu_callsigns"][self.pers["callsign"]]);
 			break;
 		case "nextCS":
-			self.csIndex++;
-			if(self.csIndex >= game["callsigns"].size)
-				self.csIndex = 0;
-			self setClientCvar("ui_playercard_cs", game["menu_callsigns"][self.csIndex]);
+			self.pers["callsign"]++;
+			if(self.pers["callsign"] >= game["callsigns"].size)
+				self.pers["callsign"] = 0;
+			self setClientCvar("ui_playercard_cs", game["menu_callsigns"][self.pers["callsign"]]);
 			break;
 		case "prevEM":
-			self.emIndex--;
-			if(self.emIndex < 0)
-				self.emIndex = game["emblems"].size - 1;
-			self setClientCvar("ui_playercard_em", game["emblems"][self.emIndex]);
+			self.pers["emblem"]--;
+			if(self.pers["emblem"] < 0)
+				self.pers["emblem"] = game["emblems"].size - 1;
+			self setClientCvar("ui_playercard_em", game["emblems"][self.pers["emblem"]]);
 			break;
 		case "nextEM":
-			self.emIndex++;
-			if(self.emIndex >= game["emblems"].size)
-				self.emIndex = 0;
-			self setClientCvar("ui_playercard_em", game["emblems"][self.emIndex]);
+			self.pers["emblem"]++;
+			if(self.pers["emblem"] >= game["emblems"].size)
+				self.pers["emblem"] = 0;
+			self setClientCvar("ui_playercard_em", game["emblems"][self.pers["emblem"]]);
 			break;
 		case "prevBG":
-			self.bgIndex--;
-			if(self.bgIndex < 0)
-				self.bgIndex = game["playercards"].size - 1;
-			self setClientCvar("ui_playercard_bg", game["playercards"][self.bgIndex]);
+			self.pers["background"]--;
+			if(self.pers["background"] < 0)
+				self.pers["background"] = game["playercards"].size - 1;
+			self setClientCvar("ui_playercard_bg", game["playercards"][self.pers["background"]]);
 			break;
 		case "nextBG":
-			self.bgIndex++;
-			if(self.bgIndex >= game["playercards"].size)
-				self.bgIndex = 0;
-			self setClientCvar("ui_playercard_bg", game["playercards"][self.bgIndex]);
+			self.pers["background"]++;
+			if(self.pers["background"] >= game["playercards"].size)
+				self.pers["background"] = 0;
+			self setClientCvar("ui_playercard_bg", game["playercards"][self.pers["background"]]);
 			break;
 		case "save":
-			logPrint( "playercard;" + self getGuid() + ";" + self.csIndex + ";" + self.bgIndex + ";" + self.emIndex + "\n" );
-			setCvar("playercard_" + id + "_callsign", self.csIndex);
-			setCvar("playercard_" + id + "_emblem", self.emIndex);
-			setCvar("playercard_" + id + "_background", self.bgIndex);
+			exp\_query::save("background", self.pers["background"], true);
+            exp\_query::save("emblem", self.pers["emblem"], true);
+            exp\_query::save("callsign", self.pers["callsign"], true);
 			break;
 		case "cancel":
-			self.csIndex = getCvarInt("playercard_" + id + "_callsign");
-			self.emIndex = getCvarInt("playercard_" + id + "_emblem");
-			self.bgIndex = getCvarInt("playercard_" + id + "_background");
+			self.pers["callsign"] = callsignIndex;
+			self.pers["emblem"] = emblemIndex;
+			self.pers["background"] = backgroundIndex;
 	
-			self setClientCvar("ui_playercard_cs", game["menu_callsigns"][self.csIndex]);
-			self setClientCvar("ui_playercard_em", game["emblems"][self.emIndex]);
-			self setClientCvar("ui_playercard_bg", game["playercards"][self.bgIndex]);
+			self setClientCvar("ui_playercard_cs", game["menu_callsigns"][callsignIndex]);
+			self setClientCvar("ui_playercard_em", game["emblems"][emblemIndex]);
+			self setClientCvar("ui_playercard_bg", game["playercards"][backgroundIndex]);
 			break;
 	}
 	
