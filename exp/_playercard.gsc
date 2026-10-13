@@ -463,78 +463,30 @@ destroyPlayerCard(pos)
 		self iprintlnbold(" ");
 	}
 	
-    self deleteClientHUDElement("playercard");
-	self deleteClientHUDElement("emblem");
-	self deleteClientHUDElement("callsign");
-	self deleteClientHUDElement("totalkills");
-	self deleteClientHUDElement("totaldeaths");
-	self deleteClientHUDElement("skill");
+    self maps\mp\uox\_uox_hud::deleteClientHUDElement("playercard");
+	self maps\mp\uox\_uox_hud::deleteClientHUDElement("emblem");
+	self maps\mp\uox\_uox_hud::deleteClientHUDElement("callsign");
+	self maps\mp\uox\_uox_hud::deleteClientHUDElement("totalkills");
+	self maps\mp\uox\_uox_hud::deleteClientHUDElement("totaldeaths");
+	self maps\mp\uox\_uox_hud::deleteClientHUDElement("skill");
 
 }
 
-spectatePlayerCard()
+spectatePlayerCard(spectatedClient)
 {
-	self endon("spawned");
-	self endon("final_killcam");
 	
 	self.oldspec = undefined;
 	self.oldorigin = (0,0,0);
-	self.spectatedclient = self getSpectatorClient("next");
+    if(!isDefined(spectatedClient)) 
+        self.spectatedclient = self getSpectatorClient("next");
+    else
+        self.spectatedclient = spectatedclient;
 	self drawPlayerCard(self.spectatedclient, 0);
 
     self maps\mp\uox\_uox_inputs::addHoldMelee("spectate prev", false, 0, 0, undefined, ::spectatePrev);
     self maps\mp\uox\_uox_inputs::addHoldFire("spectate next", false, 0, 0, undefined, ::spectateNext);
     self maps\mp\uox\_uox_loops::addToLoop(self, "fast", ::testSpectateClient, "testSpectateClient");
-	while(true)
-	{
-		
-		if(self.origin != oldorigin)
-		{
-			self.spectatedclient = undefined;
-			self notify("destroy_playercard");
-		}
-		
-		oldorigin = self.origin;
-		
-		if(self attackButtonPressed() || (isDefined(self.spectatedclient) && isPlayerDead(self.spectatedclient)))
-		{
-			while(self attackButtonPressed())
-				wait 0.05;
-			self.spectatedclient = self getSpectatorClient("next");
-			self iprintlnbold(" ");
-			self iprintlnbold(" ");
-			self iprintlnbold(" ");
-			self iprintlnbold(" ");
-			name = getPlayerName(self.spectatedclient);
-			if(isDefined(name))
-				self iprintlnbold("Spectating: " + name);
-				
-		}
-		if(self meleeButtonPressed())
-		{
-			while(self meleeButtonPressed())
-				wait 0.05;
-			self.spectatedclient = self getSpectatorClient("prev");
-			self iprintlnbold(" ");
-			self iprintlnbold(" ");
-			self iprintlnbold(" ");
-			self iprintlnbold(" ");
-			name = getPlayerName(self.spectatedclient);
-			if(isDefined(name))
-				self iprintlnbold("Spectating: " + name);
-			
-		}
-		
-		if(isDefined(self.spectatedclient))
-		{
-			if(isDefined(oldspec) && oldspec != self.spectatedclient){
-				
-				self drawPlayerCard(self.spectatedclient, 0);
-			}
-		}
-		oldspec = self.spectatedclient;
-		wait 0.05;
-	}
+	
 }
 
 testSpectateClient()
@@ -547,7 +499,7 @@ testSpectateClient()
 		
 	self.oldorigin = self.origin; //set new spectate origin setting
 
-    if(isDefined(self.spectatedclient) && !isAlive(self.spectatedclient)) //spectate next player if spectated player dies
+    if(isDefined(self.spectatedclient) && isPlayerDead(self.spectatedclient)) //spectate next player if spectated player dies
         self spectateNext();
 
     if(isDefined(self.spectatedclient)) //draw the new player card

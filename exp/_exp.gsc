@@ -380,6 +380,11 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     
     //check for multikill/killstreak
     attacker EXP_CheckKillstreak();
+
+    //set playercard spectated client to killer
+    self.spectatedclient = attacker;
+    self exp\_playercard::drawPlayerCard(self.spectatedclient, 2);
+    attacker exp\_playercard::drawPlayerCard(self, 3);
 }
 
 EXP_PlayerConnect()
@@ -387,12 +392,44 @@ EXP_PlayerConnect()
     //load player level. watch for stat menu?
     self thread EXP_LoadPlayerLevel();
     self maps\mp\uox\_uox_loops::addToLoop(self, "medium", ::updateEXPHUD, "updateEXPHUD");
+    self maps\mp\uox\_uox_loops::addToLoop(self, "medium", ::EXP_DrawPlayerCard, "EXP_DrawPlayerCard");
 }
 
 EXP_PlayerDisconnect()
 {
     //save player level.
     thread exp\_query::save("exp", self.pers["exp"]);
+}
+
+EXP_DrawPlayerCard()
+{
+    if(!level.exp_drawplayercards) 
+        return;
+
+    if(level.mapended || level.roundended || level.halftime)
+    {
+        self self notify("destroy_playercard");
+        self maps\mp\uox\_uox_inputs::removeHoldMelee("spectate prev");
+        self maps\mp\uox\_uox_inputs::removeHoldFire("spectate next");
+        self maps\mp\uox\_uox_loops::removeFromLoop(self, "fast", "testSpectateClient");
+        return;
+    }
+
+    if(self.pers["team"] == "spectator" && self.sessionstate == "spectator") //spectating
+    {
+        self exp\_playercard::spectatePlayerCard(self.spectatedclient);
+    }
+    else if(self.sessionstate == "spectator") //killcam
+    {
+        self exp\_playercard::drawPlayerCard(self.spectatedclient, 1);
+    }
+    else //playing
+    {
+        self self notify("destroy_playercard");
+        self maps\mp\uox\_uox_inputs::removeHoldMelee("spectate prev");
+        self maps\mp\uox\_uox_inputs::removeHoldFire("spectate next");
+        self maps\mp\uox\_uox_loops::removeFromLoop(self, "fast", "testSpectateClient");
+    }
 }
 
 EXP_LoadPlayerLevel()
@@ -407,6 +444,30 @@ EXP_LoadPlayerLevel()
 EXP_PostRound()
 {
     level waittill("round_ended");
+
+    if(isDefined(level.finalKillcamSpectatorClient))
+    {
+        //find player
+        players = getentarray("player", "classname");
+        for(i = 0; i < players.size; i++)
+        {
+            player = players[i];
+
+            if(!isDefined(finalKillPlayer))
+            {
+                if(player getEntityNumber() == level.finalKillcamSpectatorClient) 
+                {
+                    finalKillPlayer = player;
+                    i = 0;
+                    continue;
+                }
+                else
+                    continue;
+            }
+            else
+                player.spectatorclient = finalKillPlayer;
+        }
+    }
 
     //check ace situation
     if(isDefined(level.exp_acesituation) && level.exp_acesituation && (level.roundwinner == level.exp_aceplayer.pers["team"] || level.roundwinner == "deathmatch"))
@@ -792,7 +853,7 @@ EXP_Announce(notif, text, announce)
     {
         if(arr[i] == notif)
         {
-            iprintln(self.name + "^7: " + announce);
+            iprintln(self.name + "^7 " + announce);
         }
     }
 }
