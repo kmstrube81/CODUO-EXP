@@ -408,7 +408,7 @@ EXP_DrawPlayerCard()
 
     if(level.mapended || level.roundended || level.halftime)
     {
-        self self notify("destroy_playercard");
+        self notify("destroy_playercard");
         self maps\mp\uox\_uox_inputs::removeHoldMelee("spectate prev");
         self maps\mp\uox\_uox_inputs::removeHoldFire("spectate next");
         self maps\mp\uox\_uox_loops::removeFromLoop(self, "fast", "testSpectateClient");
@@ -425,7 +425,7 @@ EXP_DrawPlayerCard()
     }
     else //playing
     {
-        self self notify("destroy_playercard");
+        self notify("destroy_playercard");
         self maps\mp\uox\_uox_inputs::removeHoldMelee("spectate prev");
         self maps\mp\uox\_uox_inputs::removeHoldFire("spectate next");
         self maps\mp\uox\_uox_loops::removeFromLoop(self, "fast", "testSpectateClient");
