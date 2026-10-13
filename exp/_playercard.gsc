@@ -288,10 +288,17 @@ drawPlayerCard(player, pos)
 	callsign = game["callsigns"][callsignIndex];
 		
 	kills = player.pers["totalkills"];
-		
+    
 	deaths = player.pers["totaldeaths"];
 
 	skills = player.pers["skill"];
+
+    if(!isDefined(kills))
+        kills = self.pers["kills"];
+    if(!isDefined(deaths))
+        deaths = self.pers["deaths"];
+    if(!isDefined(skill))
+        skill = 0;
 	
 	options = [];
     options["sort"] = 1;
@@ -678,15 +685,15 @@ handleMenuResponse(response)
 		
 	deaths = self.pers["totaldeaths"];
 
-	skills = self.pers["skill"];
+	skill = self.pers["skill"];
 
-	if(!isDefined(self.csIndex))
-		self.csIndex = getCvarInt("playercard_" + id + "_callsign");
-	if(!isDefined(self.emIndex))
-		self.emIndex = getCvarInt("playercard_" + id + "_emblem");
-	if(!isDefined(self.bgIndex))
-		self.bgIndex = getCvarInt("playercard_" + id + "_background");
-	
+	if(!isDefined(kills))
+        kills = self.pers["kills"];
+    if(!isDefined(deaths))
+        deaths = self.pers["deaths"];
+    if(!isDefined(skill))
+        skill = 0;
+
 	self setClientCvar("ui_playercard_cs", callsign);
 	self setClientCvar("ui_playercard_em", emblem);
 	self setClientCvar("ui_playercard_bg", playercard);
