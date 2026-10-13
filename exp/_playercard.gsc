@@ -118,7 +118,7 @@ getBackgrounds()
 	array[array.size] = "gfx/backgrounds/hud@aa-vcod-british.dds";
 	array[array.size] = "gfx/backgrounds/hud@aa-vcod-russian.dds";
 	array[array.size] = "gfx/backgrounds/hud@aaz-usa-flag.dds";
-	array[array.size] = "gfx/backgrounds/hud@deadshit.dds";
+	array[array.size] = "gfx/backgrounds/hud@picklejuice.dds";
 	array[array.size] = "gfx/backgrounds/hud@punches.dds";
 	array[array.size] = "gfx/backgrounds/hud@spider.dds";
 	array[array.size] = "gfx/backgrounds/hud@butterfly.dds";
@@ -257,7 +257,7 @@ precachePlayerCardElems()
 
 drawPlayerCard(player, pos)
 {
-	if(getCvar("sv_playercards") != 1)
+	if(level.exp_drawplayercards != 1)
 		return;
 
 	self endon("flash_playercard");
@@ -268,54 +268,30 @@ drawPlayerCard(player, pos)
 	
 	id = player getEntityNumber();
 	
-	if(getCvar("playercard_size") == "")
+	/*if(getCvar("playercard_size") == "")
 		playercard_size = 1;
 	else
-		playercard_size = getCvarInt("playercard_size"); //3 256 x 64 | 2 192 x 48 | 1 128 x 32
-	if(playercard_size < 1)
-		playercard_size = 1;
+		playercard_size = getCvarInt("playercard_size"); //3 256 x 64 | 2 192 x 48 | 1 128 x 32 */
+	playercard_size = level.exp_playercard_size;	
 	
-	if(getCvar("playercard_" + id + "_emblem") == "")
-		emblemindex = 30;
-	else
-		emblemindex = getCvarInt("playercard_" + id + "_emblem");
-	if(emblemindex < 0 || emblemindex > game["emblems"].size - 1)
-		emblemindex = 30;
+	
+	emblemIndex = self.pers["emblem"];
 		
-	emblem = game["emblems"][emblemindex];
+	emblem = game["emblems"][emblemIndex];
 		
-	if(getCvar("playercard_" + id + "_background") == "")
-		playercardindex = 0;
-	else
-		playercardindex = getCvarInt("playercard_" + id + "_background");
-	if(playercardindex < 0 || playercardindex > game["playercards"].size - 1)
-		playercardindex = 0;
+	backgroundIndex = self.pers["background"];
 		
-	playercard = game["playercards"][playercardindex];
+	playercard = game["playercards"][backgroundIndex];
 		
-	if(getCvar("playercard_" + id + "_callsign") == "")
-		callsignindex = 4;
-	else
-		callsignindex = getCvarInt("playercard_" + id + "_callsign");
-	if(callsignindex < 0 || callsignindex > game["callsigns"].size - 1)
-		callsignindex = 4;
+	callsignIndex = self.pers["callsign"];
 		
-	callsign = game["callsigns"][callsignindex];
+	callsign = game["callsigns"][callsignIndex];
 		
-	if(getCvar("playercard_" + id + "_kills") == "")
-		kills = player.score;
-	else
-		kills = getCvarInt("playercard_" + id + "_kills");
+	kills = self.pers["totalkills"];
+		
+	deaths = self.pers["totaldeaths"];
 
-	if(getCvar("playercard_" + id + "_deaths") == "")
-		deaths = player.deaths;
-	else
-		deaths = getCvarInt("playercard_" + id + "_deaths");
-
-	if(getCvar("playercard_" + id + "_skill") == "")
-		skill = 0;
-	else
-		skill = getCvarFloat("playercard_" + id + "_skill");
+	skills = self.pers["skill"];
 	
 	
 	if(isDefined(self.playerCard))
