@@ -435,6 +435,7 @@ EXP_DrawPlayerCard()
 
 EXP_LoadPlayerLevel()
 {
+    self.pers["exp"] = 0;
 	self.pers["level"] = 1;
     self exp\_exp_weapons::EXP_checkLevelUnlocks();
     self exp\_query::load("exp", "Experience");
