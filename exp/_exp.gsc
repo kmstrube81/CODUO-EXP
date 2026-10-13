@@ -391,6 +391,7 @@ EXP_PlayerConnect()
 {
     //load player level. watch for stat menu?
     self thread EXP_LoadPlayerLevel();
+    self EXP_LoadPlayercard();
     self maps\mp\uox\_uox_loops::addToLoop(self, "medium", ::updateEXPHUD, "updateEXPHUD");
     self maps\mp\uox\_uox_loops::addToLoop(self, "medium", ::EXP_DrawPlayerCard, "EXP_DrawPlayerCard");
 }
@@ -439,6 +440,16 @@ EXP_LoadPlayerLevel()
     self exp\_query::load("exp", "Experience");
     self.pers["level"] = getLevel(self.pers["exp"]);
     self exp\_exp_weapons::EXP_checkLevelUnlocks();
+}
+
+EXP_LoadPlayercard()
+{
+	self.pers["background"] = 0;
+    self thread exp\_query::load("background", "Playercard Background");
+    self.pers["emblem"] = 0;
+    self thread exp\_query::load("emblem", "Playercard Emblem");
+    self.pers["callsign"] = 0;
+    self thread exp\_query::load("callsign", "Playercard Callsign");
 }
 
 EXP_PostRound()
