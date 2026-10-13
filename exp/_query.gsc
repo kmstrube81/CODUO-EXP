@@ -37,6 +37,7 @@ load(prop, propName, timeout)
 		self.pers[prop] += (int)self.pers["temp " + prop];
 	else
 		self.pers[prop] = self.pers["temp " + prop];
+	 self.exp_queryBusy = undefined;
 }
 
 timeout(prop, propName)
@@ -47,14 +48,12 @@ timeout(prop, propName)
 	self.pers[prop + " loaded"] = false;
     
     self iprintln("Failed to connect to backend. " + propName + " will not save between rounds");
+    self.exp_queryBusy = undefined;
 }
 
 loadZero(prop)
 {
-    if(isDefined(self.pers[prop]))
-        self.pers["temp " + prop] = self.pers[prop];
-    else 
-        self.pers["temp " + prop] = 0;
+    self.pers["temp " + prop] = 0;
 
 	wait level.frametime; // wait a frame before sending notify
 
@@ -91,19 +90,32 @@ loadGSC(prop, player, timeout)
 
 query(prop, timeout)
 {
-	//craft a query ID to search for the result.
-	queryID = "Q" + self getGuid() + randomInt(100000);
-	logPrint( "GET;" + self getGuid() + ";" + self getEntityNumber() + ";" + prop + ";" + self.name + \n");
+	// one query in flight per player; queue behind any pending one
+    	while(isDefined(self.exp_queryBusy))
+        	wait level.frametime;
+   	 self.exp_queryBusy = true;
 
-	self thread waitForResult(prop, queryID, timeout);
+    	if(!isDefined(level.exp_queryID))
+        	level.exp_queryID = 0;
+    	level.expQueryID++;
+    	queryID = level.exp_queryID;
+
+	//craft a query ID to search for the result.
+	playernum = self getEntityNumber();
+	setCvar("query_result_" + playernum, "");   // clear BEFORE asking, so stale data can't match
+	logPrint("GET;" + self getGuid() + ";" + playernum + ";" + queryID + ";" + prop + ";" + self.name + "\n");
+
+	self thread waitForResult(prop, playernum, timeout);
 }
 
 waitForResult(prop, queryID, timeout)
 {
+	self endon("disconnect");
+        cvarName = "query_result_" + playernum;
 	i = 0;
 	while( i < timeout * level.framerate )
 	{
-		query_result = getCvar("query_result");
+		query_result = getCvar(varName);
 		//if the queryID matches
 		if(maps\mp\uox\_uox_utils::findStr(queryID, query_result, "start") > -1)
         {
@@ -169,7 +181,7 @@ save(prop, value, force)
 			self thread exp\_exp_values::saveGSC(prop, self getGuid(), timeout);
 			return;
 		case 3: //3 = log for log parser backend (such as b3 etc)
-			logPrint("SET;" + self getGuid() + ";" + self getEntityNumber() + ";" + prop + ";" + value + ";" + self.name + \n");
+			logPrint("SET;" + self getGuid() + ";" + self getEntityNumber() + ";" + prop + ";" + value + ";" + self.name + "\n");
 			return;
 		case 4: //4 = don't save from cvar either
 			return;
