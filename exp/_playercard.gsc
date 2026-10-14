@@ -303,22 +303,25 @@ drawPlayerCard(player, pos)
 	options = [];
     options["sort"] = 1;
     options["color"] = (1,1,1);
-    options["alpha"] = 1;
+    options["alpha"] = 0.8;
     options["archived"] = false;
 
     emblemOptions = [];
     emblemOptions["sort"] = 2;
+    emblemOptions["alpha"] = 0.8;
     emblemOptions["archived"] = false;
 
     callsignOptions = [];
     callsignOptions["alignX"] = "center";
     callsignOptions["sort"] = 3;
     callsignOptions["font"] = "default";
+    callsignOptions["alpha"] = 0.8;
     callsignOptions["archived"] = false;
 
     guiOptions = [];
     guiOptions["sort"] = 3;
     guiOptions["font"] = "default";
+    guiOptions["alpha"] = 0.8;
     guiOptions["archived"] = false;
 	
 	switch(pos)
@@ -370,7 +373,7 @@ drawPlayerCard(player, pos)
             guiOptions["label"] = &"S: ";
 			guiOptions["x"] = 260;
 			guiOptions["y"] = playercardY + 21;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "number", kills, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "number", skill, guiOptions);
 			break;
 		case 2:
 			options["width"] = 192;
@@ -404,7 +407,7 @@ drawPlayerCard(player, pos)
             guiOptions["label"] = &"S: ";
 			guiOptions["x"] = 228;
 			guiOptions["y"] = playercardY + 32;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "number", kills, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "number", skill, guiOptions);
 			break;
 		default:
 			options["width"] = 256;
@@ -424,18 +427,21 @@ drawPlayerCard(player, pos)
 			callsignOptions["x"] = 288;
 			callsignOptions["y"] = playercardY + 2;
             self maps\mp\uox\_uox_hud::updateClientHUDElement("callsign", "text", callsign, callsignOptions);
-
+			
+			guiOptions["label"] = &"K: ";
 			guiOptions["x"] = 288;
 			guiOptions["y"] = playercardY + 22;
             self maps\mp\uox\_uox_hud::updateClientHUDElement("totalkills", "number", kills, guiOptions);
 
+			guiOptions["label"] = &"D: ";
 			guiOptions["x"] = 384;
 			guiOptions["y"] = playercardY + 22;
             self maps\mp\uox\_uox_hud::updateClientHUDElement("totaldeaths", "number", deaths, guiOptions);
 
+			guiOptions["label"] = &"S: ";
 			guiOptions["x"] = 288;
 			guiOptions["y"] = playercardY + 42;
-            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "number", kills, guiOptions);
+            self maps\mp\uox\_uox_hud::updateClientHUDElement("skill", "number", skill, guiOptions);
 	}
 	
 	if(pos > 0)
@@ -500,6 +506,8 @@ spectatePlayerCard(spectatedClient)
     self maps\mp\uox\_uox_inputs::addHoldMelee("spectate prev", false, 0, 0, undefined, ::spectatePrev);
     self maps\mp\uox\_uox_inputs::addHoldFire("spectate next", false, 0, 0, undefined, ::spectateNext);
     self maps\mp\uox\_uox_loops::addToLoop(self, "fast", ::testSpectateClient, "testSpectateClient");
+    
+    maps\mp\uox\_uox_debug::debugLog("info", self.name + " start playercard spectate.");
 	
 }
 
@@ -521,7 +529,8 @@ testSpectateClient()
 		self notify("destroy_playercard");
         self maps\mp\uox\_uox_inputs::removeHoldMelee("spectate prev");
         self maps\mp\uox\_uox_inputs::removeHoldFire("spectate next");
-        self maps\mp\uox\_uox_loops::removeFromLoop(self, "fast", "testSpectateClient"); 
+        self maps\mp\uox\_uox_loops::removeFromLoop(self, "fast", "testSpectateClient");
+        maps\mp\uox\_uox_debug::debugLog("info", self.name + " stop playercard spectate because player is playing"); 
         return;
 	}
 	
@@ -544,7 +553,7 @@ spectateNext()
     self iprintlnbold(" ");
     name = getPlayerName(self.spectatedclient);
     if(isDefined(name))
-        self iprintlnbold("Spectating: " + name);
+        self iprintlnbold("Spectating: " + name); 
 }
 
 spectatePrev()

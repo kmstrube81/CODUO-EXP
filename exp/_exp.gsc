@@ -410,21 +410,29 @@ EXP_DrawPlayerCard()
     if(level.mapended || level.roundended || level.halftime)
     {
         self.exp_spec = undefined;
+        self.spectatedclient = undefined;
         self notify("destroy_playercard");
         self maps\mp\uox\_uox_inputs::removeHoldMelee("spectate prev");
         self maps\mp\uox\_uox_inputs::removeHoldFire("spectate next");
         self maps\mp\uox\_uox_loops::removeFromLoop(self, "fast", "testSpectateClient");
+        maps\mp\uox\_uox_debug::debugLog("info", self.name + " stop playercard spectate because round ended"); 
         return;
     }
 
     if(self.pers["team"] == "spectator" && self.sessionstate == "spectator") //spectating
     {
         if(!isDefined(self.exp_spec))
-            self exp\_playercard::spectatePlayerCard(self.spectatedclient);
+            self exp\_playercard::spectatePlayerCard();
     }
-    else if(self.sessionstate == "spectator") //killcam
+    else if(self.sessionstate == "spectator" && isDefined(self.doingKillcam)) //killcam or post round spec
     {
         self exp\_playercard::drawPlayerCard(self.spectatedclient, 1);
+    }
+    else if(self.sessionstate == "spectator" && !isDefined(self.doingKillcam))
+    {
+        self exp\_playercard::drawPlayerCard(self.spectatedclient, 1);
+        if(!isDefined(self.exp_spec))
+            self exp\_playercard::spectatePlayerCard();
     }
     else //playing
     {
@@ -481,6 +489,14 @@ EXP_PostRound()
             }
             else
                 player.spectatedclient = finalKillPlayer;
+        }
+        
+        level waittill("start_finalkillcam");
+        players = getentarray("player", "classname");
+        for(i = 0; i < players.size; i++)
+        {
+            player = players[i];
+            player drawPlayerCard(player.spectatedclient, 1);
         }
     }
 
