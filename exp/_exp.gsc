@@ -496,7 +496,7 @@ EXP_PostRound()
         for(i = 0; i < players.size; i++)
         {
             player = players[i];
-            player drawPlayerCard(player.spectatedclient, 1);
+            player exp\_playercard::drawPlayerCard(player.spectatedclient, 1);
         }
     }
 
