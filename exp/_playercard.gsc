@@ -716,6 +716,10 @@ initMenuPlayercard()
 	kills = self.pers["totalkills"];
 	deaths = self.pers["totaldeaths"];
 	skill = self.pers["skill"];
+
+	if(!isDefined(emblemIndex) || !isDefined(backgroundIndex) || !isDefined(callsignIndex) || !isDefined(kills) || !isDefined(deaths) || !isDefined(skill))
+		return;
+
 	self setClientCvar("ui_playercard_cs", callsign);
 	self setClientCvar("ui_playercard_em", emblem);
 	self setClientCvar("ui_playercard_bg", playercard);
