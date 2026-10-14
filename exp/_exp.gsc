@@ -487,7 +487,7 @@ EXP_PostRound()
                 if(player getEntityNumber() == level.finalKillcamSpectatorClient) 
                 {
                     finalKillPlayer = player;
-                    i = 0;
+                    i = -1;
                     continue;
                 }
                 else
