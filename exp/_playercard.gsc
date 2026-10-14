@@ -502,12 +502,12 @@ spectatePlayerCard(spectatedClient)
     if(!isDefined(spectatedClient))
 	{
 		self.spectatedclient = self getSpectatorClient("next");
-		self.spectatorclient = self.spectatedclient getEntityNumber();
+		self setSpectator();
 	}
     else
 	{
 		self.spectatedclient = spectatedclient;
-		self.spectatorclient = self.spectatedclient getEntityNumber();
+		self setSpectator();
 	}
 	self drawPlayerCard(self.spectatedclient, 0);
 
@@ -557,7 +557,8 @@ testSpectateClient()
 spectateNext()
 {
     self.spectatedclient = self getSpectatorClient("next");
-	self.spectatorclient = self.spectatedclient getEntityNumber();
+	self setSpectator();
+	
     self iprintlnbold(" ");
     self iprintlnbold(" ");
     self iprintlnbold(" ");
@@ -570,7 +571,8 @@ spectateNext()
 spectatePrev()
 {
     self.spectatedclient = self getSpectatorClient("prev");
-	self.spectatorclient = self.spectatedclient getEntityNumber();
+	self setSpectator();
+
     self iprintlnbold(" ");
     self iprintlnbold(" ");
     self iprintlnbold(" ");
@@ -580,6 +582,13 @@ spectatePrev()
         self iprintlnbold("Spectating: " + name);
 }
 
+setSpectator()
+{
+	if(!isDefined(self.spectatedclient))
+		return;
+	spectatenum = self.spectatedclient getEntityNumber();
+	self.spectatorclient = spectatenum;
+}
 getPlayerName(player)
 {
 	if(!isDefined(player))
