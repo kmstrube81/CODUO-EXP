@@ -113,11 +113,11 @@ query(prop, timeout)
 waitForResult(prop, playernum, queryID, timeout)
 {
 	self endon("disconnect");
-        cvarName = "query_result_" + playernum;
+    cvarName = "query_result_" + playernum;
 	i = 0;
 	while( i < timeout * level.framerate )
 	{
-		query_result = getCvar(varName);
+		query_result = getCvar(cvarName);
 		//if the queryID matches
 		if(maps\mp\uox\_uox_utils::findStr(queryID, query_result, "start") > -1)
         {
