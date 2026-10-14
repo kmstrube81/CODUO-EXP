@@ -432,12 +432,16 @@ EXP_DrawPlayerCard()
         maps\mp\uox\_uox_debug::debugLog("info", self.name + " playercard killcam branch"); 
         self exp\_playercard::drawPlayerCard(self.spectatedclient, 1);
     }
-    else if(self.sessionstate == "spectator" && !isDefined(self.doingKillcam)) //post kill 
+    else if(self.sessionstate == "spectator" && !isDefined(self.doingKillcam) ) //post kill 
     {
         //self exp\_playercard::drawPlayerCard(self.spectatedclient, 1);
         maps\mp\uox\_uox_debug::debugLog("info", self.name + " playercard post kill branch"); 
         if(!isDefined(self.exp_spec))
+        {
+            if(isPlayerDead(self.spectatedclient))
+                self.spectatedclient = undefined;
             self exp\_playercard::spectatePlayerCard();
+        }
     }
     else //playing
     {
@@ -459,15 +463,15 @@ EXP_LoadPlayerLevel()
 EXP_LoadPlayercard()
 {
 	self.pers["background"] = 0;
-    self thread exp\_query::load("background", "Playercard Background", 30);
+    self thread exp\_query::load("background", "Playercard Background", 30, exp\_playercard::initMenuPlayercard);
     self.pers["emblem"] = 0;
-    self thread exp\_query::load("emblem", "Playercard Emblem", 30);
+    self thread exp\_query::load("emblem", "Playercard Emblem", 30, exp\_playercard::initMenuPlayercard);
     self.pers["callsign"] = 0;
-    self thread exp\_query::load("callsign", "Playercard Callsign", 30);
+    self thread exp\_query::load("callsign", "Playercard Callsign", 30, exp\_playercard::initMenuPlayercard);
 
-    self thread exp\_query::load("totalkills", "Career Kills", 30);
-    self thread exp\_query::load("totaldeaths", "Career Deaths", 30);
-    self thread exp\_query::load("skill", "Skill Rating", 30);
+    self thread exp\_query::load("totalkills", "Career Kills", 30, exp\_playercard::initMenuPlayercard);
+    self thread exp\_query::load("totaldeaths", "Career Deaths", 30, exp\_playercard::initMenuPlayercard);
+    self thread exp\_query::load("skill", "Skill Rating", 30, exp\_playercard::initMenuPlayercard);
 }
 
 EXP_PostRound()

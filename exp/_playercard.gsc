@@ -259,12 +259,12 @@ drawPlayerCard(player, pos)
 {
 	if(level.exp_drawplayercards != 1)
 		return;
-
-	self notify("flash_playercard");
 	
 	if(!isDefined(player) || !isPlayer(player))
 		return;
     
+	self notify("flash_playercard");
+
 	playercard_size = level.exp_playercard_size;	
 	
 	emblemIndex = player.pers["emblem"];
@@ -293,9 +293,9 @@ drawPlayerCard(player, pos)
 	skills = player.pers["skill"];
 
     if(!isDefined(kills))
-        kills = self.pers["kills"];
+        kills = player.pers["kills"];
     if(!isDefined(deaths))
-        deaths = self.pers["deaths"];
+        deaths = player.pers["deaths"];
     if(!isDefined(skill))
         skill = 0;
 	
@@ -686,6 +686,25 @@ getSpectatorClient(dir)
 	}
 	
 	return undefined;
+}
+
+initMenuPlayercard()
+{
+	emblemIndex = self.pers["emblem"];
+	emblem = game["emblems"][emblemIndex];
+	backgroundIndex = self.pers["background"];
+	playercard = game["playercards"][backgroundIndex];
+	callsignIndex = self.pers["callsign"];
+	callsign = game["menu_callsigns"][callsignIndex];
+	kills = self.pers["totalkills"];
+	deaths = self.pers["totaldeaths"];
+	skill = self.pers["skill"];
+	self setClientCvar("ui_playercard_cs", callsign);
+	self setClientCvar("ui_playercard_em", emblem);
+	self setClientCvar("ui_playercard_bg", playercard);
+	self setClientCvar("ui_playercard_ks", "K: " + kills);
+	self setClientCvar("ui_playercard_ds", "D: " + deaths);
+	self setClientCvar("ui_playercard_sk", "S: " + skill);
 }
 
 handleMenuResponse(response, optional)
