@@ -481,7 +481,7 @@ EXP_PostRound()
                     continue;
             }
             else
-                player.spectatorclient = finalKillPlayer;
+                player.spectatedclient = finalKillPlayer;
         }
     }
 
