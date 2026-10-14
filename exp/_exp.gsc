@@ -383,7 +383,6 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
 
     //set playercard spectated client to killer
     self.spectatedclient = attacker;
-    self exp\_playercard::drawPlayerCard(self.spectatedclient, 2);
     attacker exp\_playercard::drawPlayerCard(self, 3);
 }
 
@@ -421,17 +420,19 @@ EXP_DrawPlayerCard()
 
     if(self.pers["team"] == "spectator" && self.sessionstate == "spectator") //spectating
     {
+        maps\mp\uox\_uox_debug::debugLog("info", self.name + " playercard spectate branch"); 
         if(!isDefined(self.exp_spec))
             self exp\_playercard::spectatePlayerCard();
     }
     else if(self.sessionstate == "spectator" && isDefined(self.doingKillcam)) //killcam 
     {
+        maps\mp\uox\_uox_debug::debugLog("info", self.name + " playercard killcam branch"); 
         self exp\_playercard::drawPlayerCard(self.spectatedclient, 1);
     }
     else if(self.sessionstate == "spectator" && !isDefined(self.doingKillcam)) //post kill 
     {
-        self exp\_playercard::drawPlayerCard(self.spectatedclient, 1);
-
+        //self exp\_playercard::drawPlayerCard(self.spectatedclient, 1);
+        maps\mp\uox\_uox_debug::debugLog("info", self.name + " playercard post kill branch"); 
         if(self.spectatorclient != -1 && !isDefined(self.exp_spec))
             self exp\_playercard::spectatePlayerCard();
     }
@@ -446,9 +447,10 @@ EXP_LoadPlayerLevel()
     self.pers["exp"] = 0;
 	self.pers["level"] = 1;
     self exp\_exp_weapons::EXP_checkLevelUnlocks();
-    self exp\_query::load("exp", "Experience", 10, ::createEXPHUD);
+    self exp\_query::load("exp", "Experience");
     self.pers["level"] = getLevel(self.pers["exp"]);
     self exp\_exp_weapons::EXP_checkLevelUnlocks();
+    self createEXPHUD();
 }
 
 EXP_LoadPlayercard()
@@ -497,6 +499,7 @@ EXP_PostRound()
         for(i = 0; i < players.size; i++)
         {
             player = players[i];
+            maps\mp\uox\_uox_debug::debugLog("info", player.name + " playercard final killcam branch"); 
             player exp\_playercard::drawPlayerCard(player.spectatedclient, 1);
         }
     }
