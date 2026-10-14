@@ -260,7 +260,6 @@ drawPlayerCard(player, pos)
 	if(level.exp_drawplayercards != 1)
 		return;
 
-	self endon("flash_playercard");
 	self notify("flash_playercard");
 	
 	if(!isDefined(player) || !isPlayer(player))
@@ -454,6 +453,7 @@ drawPlayerCard(player, pos)
 spawnedPlayerCardCleanup()
 {
     self endon("disconnect");
+	self endon("flash_playercard");
 	self endon("destroy_playercard");
 	self waittill("spawned");
 	
@@ -463,6 +463,7 @@ spawnedPlayerCardCleanup()
 waitPlayerCard()
 {
     self endon("disconnect");
+	self endon("flash_playercard");
 	self endon("destroy_playercard");
 	wait 7;
 	
@@ -472,6 +473,7 @@ waitPlayerCard()
 destroyPlayerCard(pos)
 {
 	self endon("disconnect");
+	self endon("flash_playercard");
 	self waittill("destroy_playercard");
 	
 	if(pos == 2)
@@ -494,7 +496,7 @@ destroyPlayerCard(pos)
 
 spectatePlayerCard(spectatedClient)
 {
-	self.exp_spec = undefined;
+	
 	self.oldspec = undefined;
 	self.oldorigin = (0,0,0);
     if(!isDefined(spectatedClient)) 
@@ -507,6 +509,8 @@ spectatePlayerCard(spectatedClient)
     self maps\mp\uox\_uox_inputs::addHoldFire("spectate next", false, 0, 0, undefined, ::spectateNext);
     self maps\mp\uox\_uox_loops::addToLoop(self, "fast", ::testSpectateClient, "testSpectateClient");
     
+	self.exp_spec = true;
+
     maps\mp\uox\_uox_debug::debugLog("info", self.name + " start playercard spectate.");
 	
 }
@@ -592,12 +596,12 @@ isPlayerDead(spectatedPlayer)
 				return true;
 			if( player.sessionstate == "playing" && self.pers["team"] != "spectator" && player.pers["team"] == self.pers["team"] )
 				return true;
-			if( (isDefined(level.allowenemyspectate) && level.allowenemyspectate) && self.pers["team"] != "spectator" && player.pers["team"] != self.pers["team"] )
+			if( (isDefined(level.allowenemyspectate) && !level.allowenemyspectate) && self.pers["team"] != "spectator" && player.pers["team"] != self.pers["team"] )
 				return true;
 		}
 		if(spectatedPlayer == player)
 		{
-			if (player.sessionstate == "dead" || (isDefined(player.pers["team"]) && player.pers["team"] == "spectator") || ((!isDefined(level.allowenemyspectate) || !level.allowenemyspectate) && player.pers["team"] != self.pers["team"] && self.pers["team"] != "spectator" ))
+			if ((player.sessionstate == "dead" || player.sessionstate == "spectator") || (isDefined(player.pers["team"]) && player.pers["team"] == "spectator") || ((isDefined(level.allowenemyspectate) && !level.allowenemyspectate) && player.pers["team"] != self.pers["team"] && self.pers["team"] != "spectator" ))
 				return true;
 		}
 	}
@@ -623,7 +627,7 @@ getSpectatorClient(dir)
 		if(player.sessionstate != "playing")
 			continue;
 		
-		if ( !level.allowenemyspectate && player.pers["team"] != self.pers["team"] && self.pers["team"] != "spectator" )
+		if ( (isDefined(level.allowenemyspectate) && !level.allowenemyspectate) && player.pers["team"] != self.pers["team"] && self.pers["team"] != "spectator" )
 			continue;
 		
 		clients[clients.size] = player;
@@ -684,7 +688,7 @@ getSpectatorClient(dir)
 	return undefined;
 }
 
-handleMenuResponse(response)
+handleMenuResponse(response, optional)
 {
 
 	emblemIndex = self.pers["emblem"];

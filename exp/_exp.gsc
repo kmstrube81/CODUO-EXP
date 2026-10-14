@@ -424,14 +424,15 @@ EXP_DrawPlayerCard()
         if(!isDefined(self.exp_spec))
             self exp\_playercard::spectatePlayerCard();
     }
-    else if(self.sessionstate == "spectator" && isDefined(self.doingKillcam)) //killcam or post round spec
+    else if(self.sessionstate == "spectator" && isDefined(self.doingKillcam)) //killcam 
     {
         self exp\_playercard::drawPlayerCard(self.spectatedclient, 1);
     }
-    else if(self.sessionstate == "spectator" && !isDefined(self.doingKillcam))
+    else if(self.sessionstate == "spectator" && !isDefined(self.doingKillcam)) //post kill 
     {
         self exp\_playercard::drawPlayerCard(self.spectatedclient, 1);
-        if(!isDefined(self.exp_spec))
+
+        if(self.spectatorclient != -1 && !isDefined(self.exp_spec))
             self exp\_playercard::spectatePlayerCard();
     }
     else //playing
@@ -445,7 +446,7 @@ EXP_LoadPlayerLevel()
     self.pers["exp"] = 0;
 	self.pers["level"] = 1;
     self exp\_exp_weapons::EXP_checkLevelUnlocks();
-    self exp\_query::load("exp", "Experience");
+    self exp\_query::load("exp", "Experience", 10, ::createEXPHUD);
     self.pers["level"] = getLevel(self.pers["exp"]);
     self exp\_exp_weapons::EXP_checkLevelUnlocks();
 }

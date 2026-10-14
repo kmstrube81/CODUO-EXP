@@ -1,4 +1,4 @@
-load(prop, propName, timeout)
+load(prop, propName, timeout, callback)
 {
 	//set propName to property if not set
 	if(!isDefined(propName))
@@ -37,7 +37,9 @@ load(prop, propName, timeout)
 		self.pers[prop] += (int)self.pers["temp " + prop];
 	else
 		self.pers[prop] = self.pers["temp " + prop];
-	 self.exp_queryBusy = undefined;
+    if(isDefined(callback))
+        thread [[ callback ]]();
+	self.exp_queryBusy = undefined;
 }
 
 timeout(prop, propName)
