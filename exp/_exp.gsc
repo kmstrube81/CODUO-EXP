@@ -503,7 +503,7 @@ EXP_PostRound()
         {
             player = players[i];
             maps\mp\uox\_uox_debug::debugLog("info", player.name + " playercard final killcam branch"); 
-            player exp\_playercard::drawPlayerCard(player.spectatedclient, 1);
+            player exp\_playercard::drawPlayerCard(player.spectatedclient, 3);
         }
     }
 

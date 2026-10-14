@@ -99,7 +99,7 @@ query(prop, timeout)
 
     	if(!isDefined(level.exp_queryID))
         	level.exp_queryID = 0;
-    	level.expQueryID++;
+    	level.exp_queryID++;
     	queryID = level.exp_queryID;
 
 	//craft a query ID to search for the result.
