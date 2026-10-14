@@ -499,10 +499,16 @@ spectatePlayerCard(spectatedClient)
 	
 	self.oldspec = undefined;
 	self.oldorigin = self.origin;//(0,0,0);
-    if(!isDefined(spectatedClient)) 
-        self.spectatedclient = self getSpectatorClient("next");
+    if(!isDefined(spectatedClient))
+	{
+		self.spectatedclient = self getSpectatorClient("next");
+		self.spectatorclient = self.spectatedclient getEntityNumber();
+	}
     else
-        self.spectatedclient = spectatedclient;
+	{
+		self.spectatedclient = spectatedclient;
+		self.spectatorclient = self.spectatedclient getEntityNumber();
+	}
 	self drawPlayerCard(self.spectatedclient, 0);
 
     self maps\mp\uox\_uox_inputs::addHoldMelee("spectate prev", false, 0, 0, undefined, ::spectatePrev);
@@ -551,6 +557,7 @@ testSpectateClient()
 spectateNext()
 {
     self.spectatedclient = self getSpectatorClient("next");
+	self.spectatorclient = self.spectatedclient getEntityNumber();
     self iprintlnbold(" ");
     self iprintlnbold(" ");
     self iprintlnbold(" ");
@@ -563,6 +570,7 @@ spectateNext()
 spectatePrev()
 {
     self.spectatedclient = self getSpectatorClient("prev");
+	self.spectatorclient = self.spectatedclient getEntityNumber();
     self iprintlnbold(" ");
     self iprintlnbold(" ");
     self iprintlnbold(" ");
