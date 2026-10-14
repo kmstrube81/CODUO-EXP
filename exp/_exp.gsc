@@ -438,7 +438,7 @@ EXP_DrawPlayerCard()
         maps\mp\uox\_uox_debug::debugLog("info", self.name + " playercard post kill branch"); 
         if(!isDefined(self.exp_spec))
         {
-            if(ex\_playercard::isPlayerDead(self.spectatedclient))
+            if(exp\_playercard::isPlayerDead(self.spectatedclient))
                 self.spectatedclient = undefined;
             self exp\_playercard::spectatePlayerCard();
         }
