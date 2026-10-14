@@ -107,10 +107,10 @@ query(prop, timeout)
 	setCvar("query_result_" + playernum, "");   // clear BEFORE asking, so stale data can't match
 	logPrint("GET;" + self getGuid() + ";" + playernum + ";" + queryID + ";" + prop + ";" + self.name + "\n");
 
-	self thread waitForResult(prop, playernum, timeout);
+	self thread waitForResult(prop, playernum, queryID, timeout);
 }
 
-waitForResult(prop, queryID, timeout)
+waitForResult(prop, playernum, queryID, timeout)
 {
 	self endon("disconnect");
         cvarName = "query_result_" + playernum;
