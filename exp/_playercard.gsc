@@ -701,7 +701,7 @@ handleMenuResponse(response, optional)
 		
 	callsignIndex = self.pers["callsign"];
 		
-	callsign = game["callsigns"][callsignIndex];
+	callsign = game["menu_callsigns"][callsignIndex];
 		
 	kills = self.pers["totalkills"];
 		
@@ -724,26 +724,7 @@ handleMenuResponse(response, optional)
 	self setClientCvar("ui_playercard_sk", "S: " + skill);
 	
 	switch(response)
-	{
-		case "team":
-			self openMenu(game["menu_team"]);
-			break;
-
-		case "weapon":
-			if(self.pers["team"] == "allies")
-				self openMenu(game["menu_weapon_allies"]);
-			else if(self.pers["team"] == "axis")
-				self openMenu(game["menu_weapon_axis"]);
-			break;
-		case "viewmap":
-			self openMenu(game["menu_viewmap"]);
-			break;
-		case "callvote":
-			self openMenu(game["menu_callvote"]);
-			break;
-		case "playercard":
-			self openMenu(game["menu_playercard"]);
-			break;			
+	{		
 		case "prevCS":
 			self.pers["callsign"]--;
 			if(self.pers["callsign"] < 0)

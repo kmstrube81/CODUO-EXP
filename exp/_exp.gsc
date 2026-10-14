@@ -450,7 +450,7 @@ EXP_LoadPlayerLevel()
     self.pers["exp"] = 0;
 	self.pers["level"] = 1;
     self exp\_exp_weapons::EXP_checkLevelUnlocks();
-    self exp\_query::load("exp", "Experience");
+    self exp\_query::load("exp", "Experience", 30);
     self.pers["level"] = getLevel(self.pers["exp"]);
     self exp\_exp_weapons::EXP_checkLevelUnlocks();
     self createEXPHUD();
@@ -459,15 +459,15 @@ EXP_LoadPlayerLevel()
 EXP_LoadPlayercard()
 {
 	self.pers["background"] = 0;
-    self thread exp\_query::load("background", "Playercard Background");
+    self thread exp\_query::load("background", "Playercard Background", 30);
     self.pers["emblem"] = 0;
-    self thread exp\_query::load("emblem", "Playercard Emblem");
+    self thread exp\_query::load("emblem", "Playercard Emblem", 30);
     self.pers["callsign"] = 0;
-    self thread exp\_query::load("callsign", "Playercard Callsign");
+    self thread exp\_query::load("callsign", "Playercard Callsign", 30);
 
-    self thread exp\_query::load("totalkills", "Career Kills");
-    self thread exp\_query::load("totaldeaths", "Career Deaths");
-    self thread exp\_query::load("skill", "Skill Rating");
+    self thread exp\_query::load("totalkills", "Career Kills", 30);
+    self thread exp\_query::load("totaldeaths", "Career Deaths", 30);
+    self thread exp\_query::load("skill", "Skill Rating", 30);
 }
 
 EXP_PostRound()
@@ -910,6 +910,7 @@ createEXPHUD()
 	backgroundOptions["y"] = 474;
 	backgroundOptions["height"] = 7;
 	backgroundOptions["width"] = (barsize + 2);
+    backgroundOptions["archived"] = false;
     backgroundOptions["sort"] = 0;
 	
 	barOptions = [];
@@ -920,6 +921,7 @@ createEXPHUD()
     barOptions["color"] = ( 0.53, 0.87, 0.96 );
 	barOptions["alpha"] = 1;
 	barOptions["height"] = 5;
+    barOptions["archived"] = false;
     barOptions["sort"] = 1;
 
     //if text exists, add it to the progress bar
@@ -930,6 +932,7 @@ createEXPHUD()
     textOptions["y"] = 473;
     textOptions["fontscale"] = 0.45;
     //textOptions["color"] = (.5,.5,.5);
+    textOptions["archived"] = false;
     textOptions["sort"] = 2; //draw ontop of bar
 
     lvlOptions = [];
@@ -939,6 +942,7 @@ createEXPHUD()
     lvlOptions["y"] = 473;
     lvlOptions["fontscale"] = 0.6;
     //textOptions["color"] = (.5,.5,.5);
+    lvlOptions["archived"] = false;
     lvlOptions["sort"] = 2; //draw ontop of bar
     lvlOptions["label"] = game["lvlText"];
 
@@ -1036,7 +1040,7 @@ createEXPHUD()
 
 deleteEXPHUD()
 {
-
+    self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_lvl");
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_barbackground");
 	self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_bar");
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("exp_bardiv");
