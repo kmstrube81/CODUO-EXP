@@ -488,7 +488,7 @@ destroyPlayerCard(pos)
 
 spectatePlayerCard(spectatedClient)
 {
-	
+	self.exp_spec = undefined;
 	self.oldspec = undefined;
 	self.oldorigin = (0,0,0);
     if(!isDefined(spectatedClient)) 
@@ -515,7 +515,16 @@ testSpectateClient()
 
     if(isDefined(self.spectatedclient) && isPlayerDead(self.spectatedclient)) //spectate next player if spectated player dies
         self spectateNext();
-
+     if(self.pers["team"] != "spectator" && self.sessionstate == "playing")
+     {    //stop spectating
+     	self.exp_spec = undefined;
+		self notify("destroy_playercard");
+        self maps\mp\uox\_uox_inputs::removeHoldMelee("spectate prev");
+        self maps\mp\uox\_uox_inputs::removeHoldFire("spectate next");
+        self maps\mp\uox\_uox_loops::removeFromLoop(self, "fast", "testSpectateClient"); 
+        return;
+	}
+	
     if(isDefined(self.spectatedclient)) //draw the new player card
     {
         if(isDefined(self.oldspec) && self.oldspec != self.spectatedclient)

@@ -360,7 +360,7 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
     //delete the array
     self.assistDamage = undefined;
 
-    if(sMeansOfDeath == "MOD_HEAD_SHOT")
+    if(sMeansOfDeath == "MOD_HEADSHOT")
     {
         attacker.notification = "headshot";
     }
@@ -409,6 +409,7 @@ EXP_DrawPlayerCard()
 
     if(level.mapended || level.roundended || level.halftime)
     {
+        self.exp_spec = undefined;
         self notify("destroy_playercard");
         self maps\mp\uox\_uox_inputs::removeHoldMelee("spectate prev");
         self maps\mp\uox\_uox_inputs::removeHoldFire("spectate next");
@@ -418,7 +419,8 @@ EXP_DrawPlayerCard()
 
     if(self.pers["team"] == "spectator" && self.sessionstate == "spectator") //spectating
     {
-        self exp\_playercard::spectatePlayerCard(self.spectatedclient);
+        if(!isDefined(self.exp_spec))
+            self exp\_playercard::spectatePlayerCard(self.spectatedclient);
     }
     else if(self.sessionstate == "spectator") //killcam
     {
@@ -426,10 +428,7 @@ EXP_DrawPlayerCard()
     }
     else //playing
     {
-        self notify("destroy_playercard");
-        self maps\mp\uox\_uox_inputs::removeHoldMelee("spectate prev");
-        self maps\mp\uox\_uox_inputs::removeHoldFire("spectate next");
-        self maps\mp\uox\_uox_loops::removeFromLoop(self, "fast", "testSpectateClient");
+        return;
     }
 }
 
