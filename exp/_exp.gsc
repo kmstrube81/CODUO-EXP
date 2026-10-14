@@ -408,13 +408,16 @@ EXP_DrawPlayerCard()
 
     if(level.mapended || level.roundended || level.halftime)
     {
-        self.exp_spec = undefined;
-        self.spectatedclient = undefined;
-        self notify("destroy_playercard");
-        self maps\mp\uox\_uox_inputs::removeHoldMelee("spectate prev");
-        self maps\mp\uox\_uox_inputs::removeHoldFire("spectate next");
-        self maps\mp\uox\_uox_loops::removeFromLoop(self, "fast", "testSpectateClient");
-        maps\mp\uox\_uox_debug::debugLog("info", self.name + " stop playercard spectate because round ended"); 
+        if(isDefined(self.exp_spec))
+        {
+            self.exp_spec = undefined;
+            self.spectatedclient = undefined;
+            self notify("destroy_playercard");
+            self maps\mp\uox\_uox_inputs::removeHoldMelee("spectate prev");
+            self maps\mp\uox\_uox_inputs::removeHoldFire("spectate next");
+            self maps\mp\uox\_uox_loops::removeFromLoop(self, "fast", "testSpectateClient");
+            maps\mp\uox\_uox_debug::debugLog("info", self.name + " stop playercard spectate because round ended"); 
+        }
         return;
     }
 
@@ -433,7 +436,7 @@ EXP_DrawPlayerCard()
     {
         //self exp\_playercard::drawPlayerCard(self.spectatedclient, 1);
         maps\mp\uox\_uox_debug::debugLog("info", self.name + " playercard post kill branch"); 
-        if(self.spectatorclient != -1 && !isDefined(self.exp_spec))
+        if(!isDefined(self.exp_spec))
             self exp\_playercard::spectatePlayerCard();
     }
     else //playing
