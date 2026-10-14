@@ -498,7 +498,7 @@ spectatePlayerCard(spectatedClient)
 {
 	
 	self.oldspec = undefined;
-	self.oldorigin = (0,0,0);
+	self.oldorigin = self.origin;//(0,0,0);
     if(!isDefined(spectatedClient)) 
         self.spectatedclient = self getSpectatorClient("next");
     else
