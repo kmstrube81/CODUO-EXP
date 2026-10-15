@@ -428,7 +428,7 @@ EXP_DrawPlayerCard()
     }
     else if(self.sessionstate == "dead")
     {
-        self exp\_playercard::drawPlayerCard(self.spectatedclient, 3);
+        self exp\_playercard::drawPlayerCard(self.spectatedclient, 2);
     }
     else if(self.sessionstate == "spectator" && isDefined(self.doingKillcam)) //killcam 
     {
@@ -664,6 +664,7 @@ EXP_HudPop(value)
     options["alignX"] = "left";
     options["alignY"] = "middle";
     options["alpha"] = 1;
+    options["archived"] = false;
     options["fontscale"] = 1.5;
     _options = [];
     _options["x"] = 320;
@@ -671,6 +672,7 @@ EXP_HudPop(value)
     _options["alignX"] = "right";
     _options["alignY"] = "middle";
     _options["alpha"] = 1;
+    _options["archived"] = false;
     _options["fontscale"] = 1.5;
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_pop", "number", value, options);
@@ -725,6 +727,7 @@ EXP_HudSlam(text)
     options["alignX"] = "center";
     options["alignY"] = "middle";
     options["alpha"] = 1;
+    options["archived"] = false;
     options["fontscale"] = 1.5;
 
     element = self maps\mp\uox\_uox_hud::updateClientHUDElement("exp_notification", "text", text, options);
