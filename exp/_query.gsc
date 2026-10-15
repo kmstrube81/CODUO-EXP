@@ -75,6 +75,8 @@ loadBatched(props, _props, propNames, timeout, callback)
 
 waitForLoadOrTimeout(prop, callback)
 {
+    self.pers[prop + " loaded"] = false;
+
     self endon("load_timeout " + prop);
     self waittill("load_result " + prop);
     
@@ -283,7 +285,7 @@ save(prop, value, force)
         force = false;
     }
     //if the temp value hasn't been set then load failed so don't save (unless forced)
-    if(!self.pers[prop + " loaded"] && !force)
+    if((!isDefined(self.pers[prop + " loaded"]) || (isDefined(self.pers[prop + " loaded"]) && !self.pers[prop + " loaded"])) && !force)
     {
         return;
     }
