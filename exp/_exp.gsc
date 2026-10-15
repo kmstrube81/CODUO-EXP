@@ -460,7 +460,7 @@ EXP_LoadPlayer()
     self.pers["skill"] =  0;
     self exp\_exp_weapons::EXP_checkLevelUnlocks();
     self thread exp\_query::load("exp, background, emblem, callsign, totalkills, totaldeaths, skill",
-                                 "Experience Points", "Playercard Background, Playercard Emblem, Playercard Callsign, Career Kills, Career Deaths, Skill Rating",
+                                 "Experience Points, Playercard Background, Playercard Emblem, Playercard Callsign, Career Kills, Career Deaths, Skill Rating",
                                  60, ::EXP_LoadPlayerStats); 
 }
 
@@ -469,12 +469,11 @@ EXP_LoadPlayerStats()
     if(!isDefined(self.loaded))
     {
         self.loaded = true;
-        wait level.frametime; //wait a single server frame to allow values to be correct
         self.pers["level"] = getLevel(self.pers["exp"]);
         self exp\_exp_weapons::EXP_checkLevelUnlocks();
+        self deleteEXPHUD();
         self createEXPHUD();
     }
-    //wait a single server frame to allow values to be correct;
     self exp\_playercard::initMenuPlayercard();
 }
 
