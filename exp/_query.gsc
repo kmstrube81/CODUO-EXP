@@ -170,7 +170,7 @@ batchedQuery(props, _props, timeout)
     //craft a query ID to search for the result.
 	playernum = self getEntityNumber();
 	setCvar("query_result_" + playernum, "");   // clear BEFORE asking, so stale data can't match
-	logPrint("GET;" + self getGuid() + ";" + playernum + ";" + queryID + ";" + props + ";" + self.name + "\n");
+	logPrint("GET;" + self getGuid() + ";" + playernum + ";" + queryID + ";" + _props + ";" + self.name + "\n");
 
 	self thread waitForBatchedResult(props, playernum, queryID, timeout);
 }
