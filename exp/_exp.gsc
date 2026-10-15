@@ -471,8 +471,6 @@ EXP_LoadPlayerStats()
         self.loaded = true;
         self.pers["level"] = getLevel(self.pers["exp"]);
         self exp\_exp_weapons::EXP_checkLevelUnlocks();
-        self deleteEXPHUD();
-        self createEXPHUD();
     }
     self exp\_playercard::initMenuPlayercard();
 }
@@ -1002,6 +1000,7 @@ createEXPHUD()
 		denom.lvl = self.pers["level"];
         denom.exp0 = getLevelExperience( ( self.pers["level"] ) );
         denom.exp = xp;
+        updateBar = true;
         overflow = true;
 	}
     xp = denom.exp0;
