@@ -466,12 +466,7 @@ EXP_LoadPlayer()
 
 EXP_LoadPlayerStats()
 {
-    if(!isDefined(self.loaded))
-    {
-        self.loaded = true;
-        self.pers["level"] = getLevel(self.pers["exp"]);
-        self exp\_exp_weapons::EXP_checkLevelUnlocks();
-    }
+    self EXP_SetLevel();
     self exp\_playercard::initMenuPlayercard();
 }
 
@@ -739,23 +734,25 @@ EXP_updateEXP(xp)
 {
     self.pers["exp"] += (xp * level.exp_multiplier);
 
+    self EXP_SetLevel();
+}
+
+EXP_SetLevel()
+{
     lvl = getLevel(self.pers["exp"]);
+    if(lvl == self.pers["level"])
+        return false;
 
-    if(lvl != self.pers["level"])
-    {
-        maps\mp\uox\_uox_debug::debugLog("debug", self.name + " promoted from level " + self.pers["level"] + " to level " + lvl);
-
-        self notify("level updated", lvl > self.pers["level"]);
-
-        self.pers["level"] = lvl;
-
-        self EXP_RankHudSetStatusIcon();
-        self exp\_exp_weapons::EXP_checkLevelUnlocks();
-    }
+    self.pers["level"] = lvl;
+    self EXP_RankHudSetStatusIcon();
+    self exp\_exp_weapons::EXP_checkLevelUnlocks();
+    return true;
 }
 
 updateEXPHUD()
 {
+    self EXP_SetLevel();
+
     if(isAlive(self) && self.pers["team"] != "spectator" && self.sessionstate == "playing" && [[level.getVars]]("exp_drawexpbar"))
         self createEXPHUD();
     else 
