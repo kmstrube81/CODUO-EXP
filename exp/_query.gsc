@@ -15,6 +15,7 @@ load(props, propNames, timeout, callback)
         self thread loadBatched(propArr, props, propNamesArr, timeout, callback);
         return;
     }
+    prop = propArr[0];
 	switch(level.exp_loadtype)
 	{
 		case 0: //0 = instantly set property to zero
