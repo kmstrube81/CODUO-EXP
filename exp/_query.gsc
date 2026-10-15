@@ -6,7 +6,7 @@ load(props, propNames, timeout, callback)
 		propNames = props;
      propNamesArr = maps\mp\uox\_uox_utils::stringSplit(propNames, ",");
 	//set timeout before giving up checking for result
-	if(!isDefined(timeout) || ( isDefined(timeout) && timeout > 10))
+	if(!isDefined(timeout))
 		timeout = 10;
 
     //if a second prop exists then loads need to be batched

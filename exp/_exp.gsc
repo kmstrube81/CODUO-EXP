@@ -389,8 +389,7 @@ EXP_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDir, sH
 EXP_PlayerConnect()
 {
     //load player level. watch for stat menu?
-    self thread EXP_LoadPlayerLevel();
-    self EXP_LoadPlayercard();
+    self thread EXP_LoadPlayer();
     self maps\mp\uox\_uox_loops::addToLoop(self, "medium", ::updateEXPHUD, "updateEXPHUD");
     self maps\mp\uox\_uox_loops::addToLoop(self, "medium", ::EXP_DrawPlayerCard, "EXP_DrawPlayerCard");
 }
@@ -449,25 +448,29 @@ EXP_DrawPlayerCard()
     }
 }
 
-EXP_LoadPlayerLevel()
+EXP_LoadPlayer()
 {
     self.pers["exp"] = 0;
 	self.pers["level"] = 1;
-    self exp\_exp_weapons::EXP_checkLevelUnlocks();
-    self exp\_query::load("exp", "Experience", 10);
-    self.pers["level"] = getLevel(self.pers["exp"]);
-    self exp\_exp_weapons::EXP_checkLevelUnlocks();
-    self createEXPHUD();
-}
-
-EXP_LoadPlayercard()
-{
-	self.pers["background"] = 0;
+    self.pers["background"] = 0;
     self.pers["emblem"] = 0;
     self.pers["callsign"] = 0;
-    self thread exp\_query::load("background, emblem, callsign, totalkills, totaldeaths, skill",
-                                 "Playercard Background, Playercard Emblem, Playercard Callsign, Career Kills, Career Deaths, Skill Rating",
-                                 10, exp\_playercard::initMenuPlayercard);
+    self exp\_exp_weapons::EXP_checkLevelUnlocks();
+    self thread exp\_query::load("exp, background, emblem, callsign, totalkills, totaldeaths, skill",
+                                 "Experience Points", "Playercard Background, Playercard Emblem, Playercard Callsign, Career Kills, Career Deaths, Skill Rating",
+                                 60, ::EXP_LoadPlayerStats); 
+}
+
+EXP_LoadPlayerStats()
+{
+    if(!isDefined(self.loaded))
+    {
+        self.loaded = true;
+        self.pers["level"] = getLevel(self.pers["exp"]);
+        self exp\_exp_weapons::EXP_checkLevelUnlocks();
+        self createEXPHUD();
+    }
+    self exp\_playercard::initMenuPlayercard();
 }
 
 EXP_PostRound()
