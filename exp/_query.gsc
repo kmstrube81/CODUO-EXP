@@ -12,6 +12,7 @@ load(props, propNames, timeout, callback)
     //if a second prop exists then loads need to be batched
     if(isDefined(propArr[1]))
     {
+        maps\mp\uox\_uox_debug::debugLog("info", self.name + " batched load branch: " + props);
         self thread loadBatched(propArr, props, propNamesArr, timeout, callback);
         return;
     }
