@@ -36,7 +36,7 @@ load(prop, propName, timeout, callback)
 	if(isDefined(self.pers[prop]))
 		self.pers[prop] += (int)self.pers["temp " + prop];
 	else
-		self.pers[prop] = self.pers["temp " + prop];
+		self.pers[prop] = (int)self.pers["temp " + prop];
     if(isDefined(callback))
         thread [[ callback ]]();
 	self.exp_queryBusy = undefined;
@@ -121,7 +121,7 @@ waitForResult(prop, playernum, queryID, timeout)
 		//if the queryID matches
 		if(maps\mp\uox\_uox_utils::findStr(queryID, query_result, "start") > -1)
         {
-            self.pers["temp " + prop] = maps\mp\uox\_uox_utils::stringSplit(query_result)[1];
+            self.pers["temp " + prop] = (int)maps\mp\uox\_uox_utils::stringSplit(query_result)[1];
             self notify("load_result " + prop);
             return;
         }
@@ -169,7 +169,7 @@ save(prop, value, force)
         force = false;
     }
     //if the temp value hasn't been set then load failed so don't save (unless forced)
-    if(!isDefined(self.pers["temp " + prop]) && !force)
+    if(!self.pers[prop + " loaded"] && !force)
     {
         return;
     }
