@@ -814,6 +814,7 @@ handleMenuResponse(response, optional)
 			self setClientCvar("ui_playercard_cs", game["menu_callsigns"][callsignIndex]);
 			self setClientCvar("ui_playercard_em", game["emblems"][emblemIndex]);
 			self setClientCvar("ui_playercard_bg", game["playercards"][backgroundIndex]);
+			self closeMenu(game["menu_playercard"]);
 			break;
 	}
 	
