@@ -450,6 +450,8 @@ EXP_DrawPlayerCard()
 
 EXP_LoadPlayer()
 {
+    
+    maps\mp\uox\_uox_debug::debugLog("info", self.name + " EXP_LoadPlayer run, loaded=" + isDefined(self.loaded));
     self.pers["exp"] = 0;
 	self.pers["level"] = 1;
     self.pers["background"] = 0;
@@ -466,6 +468,8 @@ EXP_LoadPlayer()
 
 EXP_LoadPlayerStats()
 {
+    maps\mp\uox\_uox_debug::debugLog("info", self.name + " stats cb exp=" + self.pers["exp"] + " getLevel=" + getLevel(self.pers["exp"]) + " lvl=" + self.pers["level"]);
+    self.loaded = true;
     self EXP_SetLevel();
     self exp\_playercard::initMenuPlayercard();
 }
