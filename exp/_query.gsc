@@ -4,7 +4,7 @@ load(props, propNames, timeout, callback)
 	//set propName to property if not set
 	if(!isDefined(propNames))
 		propNames = props;
-     propNamesArr = maps\mp\uox\_uox_utils::stringSplit(props, ",");
+     propNamesArr = maps\mp\uox\_uox_utils::stringSplit(propNames, ",");
 	//set timeout before giving up checking for result
 	if(!isDefined(timeout) || ( isDefined(timeout) && timeout > 10))
 		timeout = 10;
@@ -17,6 +17,7 @@ load(props, propNames, timeout, callback)
         return;
     }
     prop = propArr[0];
+    propName = propNamesArr[0];
 	switch(level.exp_loadtype)
 	{
 		case 0: //0 = instantly set property to zero
@@ -37,8 +38,7 @@ load(props, propNames, timeout, callback)
 	}
 	
 	self thread timeout(prop, propName);
-    self thread waitForLoadOrTimeout(prop, callback);  
-    self.exp_queryBusy = undefined;
+    self thread waitForLoadOrTimeout(prop, callback);
 }
 
 loadBatched(props, _props, propNames, timeout, callback)
@@ -55,7 +55,7 @@ loadBatched(props, _props, propNames, timeout, callback)
         switch(level.exp_loadtype) //run regular setters individually for other types
     	{
     		case 0: //0 = instantly set property to zero
-    			self thread loadZero(props);
+    			self thread loadZero(prop);
     			break;
     		case 1: //1 = randomly set a value
     			self thread loadRandom(prop, timeout);
@@ -71,7 +71,6 @@ loadBatched(props, _props, propNames, timeout, callback)
         self thread timeout(prop, propName);
         self thread waitForLoadOrTimeout(prop, callback);
     }
-    self.exp_queryBusy = undefined;
 }
 
 waitForLoadOrTimeout(prop, callback)
@@ -88,7 +87,7 @@ waitForLoadOrTimeout(prop, callback)
 	else
 		self.pers[prop] = (int)self.pers["temp " + prop];
     if(isDefined(callback))
-        thread [[ callback ]]();
+       self thread [[ callback ]]();
 }
 
 timeout(prop, propName)
@@ -187,10 +186,11 @@ waitForResult(prop, playernum, queryID, timeout)
 	{
 		query_result = getCvar(cvarName);
 		//if the queryID matches
-		if(maps\mp\uox\_uox_utils::findStr(queryID, query_result, "start") > -1)
+		if(maps\mp\uox\_uox_utils::findStr(queryID + ";", query_result, "start") > -1)
         {
             self.pers["temp " + prop] = (int)maps\mp\uox\_uox_utils::stringSplit(query_result)[1];
             self notify("load_result " + prop);
+            self.exp_queryBusy = undefined;
             return;
         }
 		//otherwise wait and try again
@@ -199,6 +199,7 @@ waitForResult(prop, playernum, queryID, timeout)
 	}
 	//hit timeout
 	self notify("load_timeout " + prop);
+    self.exp_queryBusy = undefined;
 }
 
 waitForBatchedResult(props, playernum, queryID, timeout)
@@ -248,6 +249,7 @@ waitForBatchedResult(props, playernum, queryID, timeout)
             }
         }
     }
+    self.exp_queryBusy = undefined;
 }
 
 loadCvar(prop, timeout)
