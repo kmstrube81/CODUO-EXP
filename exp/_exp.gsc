@@ -426,6 +426,10 @@ EXP_DrawPlayerCard()
         if(!isDefined(self.exp_spec))
             self exp\_playercard::spectatePlayerCard();
     }
+    else if(self.sessionstate == "dead")
+    {
+        self exp\_playercard::drawPlayerCard(self.spectatedclient, 3);
+    }
     else if(self.sessionstate == "spectator" && isDefined(self.doingKillcam)) //killcam 
     {
         maps\mp\uox\_uox_debug::debugLog("info", self.name + " playercard killcam branch"); 
@@ -507,7 +511,7 @@ EXP_PostRound()
         {
             player = players[i];
             maps\mp\uox\_uox_debug::debugLog("info", player.name + " playercard final killcam branch"); 
-            player exp\_playercard::drawPlayerCard(player.spectatedclient, 3);
+            player exp\_playercard::drawPlayerCard(player.spectatedclient, 1);
         }
     }
 

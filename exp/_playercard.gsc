@@ -485,6 +485,7 @@ destroyPlayerCard(pos)
 		self iprintlnbold(" ");
 	}
 	
+	self.spectatedclient = undefined;
     self maps\mp\uox\_uox_hud::deleteClientHUDElement("playercard");
 	self maps\mp\uox\_uox_hud::deleteClientHUDElement("emblem");
 	self maps\mp\uox\_uox_hud::deleteClientHUDElement("callsign");
